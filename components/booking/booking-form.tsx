@@ -91,18 +91,22 @@ export default function BookingForm({ packages }: BookingFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Select Package</FormLabel>
-                <Select id="package-select" onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a package" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {packages.map((pkg) => (
-                      <SelectItem key={pkg.id} value={pkg.id}>
-                        {pkg.name} - ${pkg.price}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="fashion">Fashion Collection</SelectItem>
+                    <SelectItem value="celebrity">Celebrity Portraits</SelectItem>
+                    <SelectItem value="convocation">Convocation</SelectItem>
+                    <SelectItem value="birthday">Birthday Portrait</SelectItem>
+                    <SelectItem value="family">Family Portrait</SelectItem>
+                    <SelectItem value="maternity">Maternity</SelectItem>
+                    <SelectItem value="wedding">Wedding Portrait</SelectItem>
+                    <SelectItem value="pre-wedding">Pre Wedding Portrait</SelectItem>
+                    <SelectItem value="events">Events Candids</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
