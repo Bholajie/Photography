@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
@@ -18,26 +18,65 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
+  const scrollPosRef = useRef(0)
 
+  // Track scroll position for header appearance
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
     }
     
     window.addEventListener("scroll", handleScroll)
+    handleScroll() // Initialize on mount
+    
     return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  // Handle mobile menu toggle with proper scroll position management
+  const toggleMobileMenu = () => {
+    if (!mobileMenuOpen) {
+      // Store current scroll position before opening menu
+      scrollPosRef.current = window.scrollY
+      
+      // Apply fixed position to body to prevent scrolling
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollPosRef.current}px`
+      document.body.style.width = '100%'
+      document.body.style.overflow = 'hidden'
+    } else {
+      // Restore body positioning
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      document.body.style.overflow = ''
+      
+      // Restore scroll position
+      window.scrollTo(0, scrollPosRef.current)
+    }
+    
+    setMobileMenuOpen(!mobileMenuOpen)
+  }
+
+  // Clean up body styles on unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      document.body.style.overflow = ''
+    }
   }, [])
 
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled || pathname !== "/" 
-          ? "bg-background/90 backdrop-blur-md shadow-sm py-3"
-          : "bg-transparent py-5"
+          ? "bg-white dark:bg-black shadow-sm py-3"
+          : "bg-white/80 dark:bg-black/80 py-5"
       }`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <Link href="/" className="font-display text-xl md:text-2xl">
+        <Link href="/" className="font-display text-xl md:text-2xl relative z-50">
           Sheyilor Photography
         </Link>
         
@@ -68,12 +107,12 @@ export default function Navbar() {
         </nav>
         
         {/* Mobile Nav Toggle */}
-        <div className="flex items-center md:hidden">
+        <div className="flex items-center md:hidden relative z-50">
           <ModeToggle />
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={toggleMobileMenu}
             className="ml-2"
           >
             {mobileMenuOpen ? <X /> : <Menu />}
@@ -81,32 +120,53 @@ export default function Navbar() {
         </div>
       </div>
       
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-16 bg-background z-40 p-4">
-          <nav className="flex flex-col items-center space-y-6 pt-8">
+      {/* Mobile Menu with pre-rendered empty container for smooth transitions */}
+      <div 
+        className={`md:hidden fixed inset-0 bg-background z-40 transition-opacity duration-300 ${
+          mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <div className="flex flex-col items-center justify-center min-h-screen px-4">
+          <nav className="flex flex-col items-center space-y-8 w-full max-w-xs">
             {navLinks.map((link) => (
               <Link 
                 key={link.href}
                 href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`text-lg ${
+                onClick={() => toggleMobileMenu()}
+                className={`text-xl transition-colors ${
                   pathname === link.href 
                     ? "font-medium text-accent" 
-                    : "text-foreground/80"
+                    : "text-foreground hover:text-accent"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-            <Button asChild>
-              <Link href="/book" onClick={() => setMobileMenuOpen(false)}>
-                Book Session
-              </Link>
-            </Button>
+            <div className="pt-6 w-full">
+              <Button asChild className="w-full">
+                <Link 
+                  href="/book" 
+                  onClick={() => toggleMobileMenu()}
+                >
+                  Book Session
+                </Link>
+              </Button>
+            </div>
+            <div className="w-full">
+              <Button asChild variant="outline" className="w-full">
+                <Link 
+                  href="https://www.instagram.com/sheyilor_?igsh=MTk0YnMyZDBlcHVjag==" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  onClick={() => toggleMobileMenu()}
+                >
+                  Instagram
+                </Link>
+              </Button>
+            </div>
           </nav>
         </div>
-      )}
+      </div>
     </header>
   )
 }

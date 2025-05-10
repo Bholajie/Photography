@@ -384,25 +384,25 @@ export async function getGalleryByCategory(slug: string): Promise<GalleryType | 
         },
         {
           id: "birthday-2",
-          url: "/images/Birthday Portrait/SHEY9463.jpg",
+          url: "/images/BirthdayPortrait/SHEY9463.jpg",
           alt: "Birthday Portrait 2",
           aspectRatio: "portrait"
         },
         {
           id: "birthday-3",
-          url: "/images/Birthday Portrait/SHEY0578.jpg",
+          url: "/images/BirthdayPortrait/SHEY0578.jpg",
           alt: "Birthday Portrait 3",
           aspectRatio: "portrait"
         },
         {
           id: "birthday-4",
-          url: "/images/Birthday Portrait/SHEY7452.jpg",
+          url: "/images/BirthdayPortrait/SHEY7452.jpg",
           alt: "Birthday Portrait 4",
           aspectRatio: "portrait"
         },
         {
           id: "birthday-5",
-          url: "/images/Birthday Portrait/IMG_2152.JPG",
+          url: "/images/BirthdayPortrait/IMG_2152.JPG",
           alt: "Birthday Portrait 5",
           aspectRatio: "portrait"
         }
