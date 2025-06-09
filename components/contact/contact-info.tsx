@@ -1,4 +1,6 @@
-import { Mail, Phone, MapPin, Clock, Instagram, Facebook, Twitter } from "lucide-react"
+import { Mail, Phone, MapPin, Clock } from "lucide-react"
+import { FaTiktok } from "react-icons/fa"
+import { Instagram, Twitter } from "lucide-react"
 
 export default function ContactInfo() {
   const contactDetails = [
@@ -34,9 +36,21 @@ export default function ContactInfo() {
   ]
   
   const socialMedia = [
-    { icon: <Instagram className="h-5 w-5" />, name: "Instagram", url: "#" },
-    { icon: <Facebook className="h-5 w-5" />, name: "Facebook", url: "#" },
-    { icon: <Twitter className="h-5 w-5" />, name: "Twitter", url: "#" }
+    { 
+      icon: <Instagram className="h-5 w-5" />, 
+      name: "Instagram", 
+      url: "https://instagram.com/sheyilor_" 
+    },
+    { 
+      icon: <FaTiktok className="h-5 w-5" />, 
+      name: "TikTok", 
+      url: "https://tiktok.com/sheyilor_" 
+    },
+    { 
+      icon: <Twitter className="h-5 w-5" />, 
+      name: "Twitter", 
+      url: "https://x.com/its_sheyilor" 
+    }
   ]
   
   return (
@@ -76,6 +90,8 @@ export default function ContactInfo() {
             <a
               key={index}
               href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-center h-10 w-10 rounded-full bg-secondary hover:bg-accent/10 transition-colors"
               aria-label={social.name}
             >

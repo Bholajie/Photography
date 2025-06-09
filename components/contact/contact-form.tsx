@@ -38,20 +38,30 @@ export default function ContactForm() {
     setIsSubmitting(true)
     
     try {
-      // This would be connected to an API route in a real implementation
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
       
-      toast.success("Message sent successfully!", {
-        description: "We'll get back to you as soon as possible.",
-      })
-      
-      form.reset()
+      if (result.success) {
+        toast.success("Message sent successfully!", {
+          description: "We'll get back to you as soon as possible.",
+        });
+        form.reset();
+      } else {
+        throw new Error(result.error || "Failed to send message");
+      }
     } catch (error) {
       toast.error("Failed to send message", {
         description: "Please try again later.",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
   

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -8,11 +8,11 @@ import { Calendar } from "@/components/ui/calendar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Check } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { PackageType } from "@/lib/types"
@@ -33,6 +33,8 @@ const bookingFormSchema = z.object({
   phone: z.string().min(10, {
     message: "Please enter a valid phone number",
   }),
+  location: z.string().optional(),
+  additionalOptions: z.array(z.string()).optional(),
   additionalInfo: z.string().optional(),
 })
 
@@ -40,44 +42,100 @@ type BookingFormValues = z.infer<typeof bookingFormSchema>
 
 interface BookingFormProps {
   packages: PackageType[]
+  selectedPackageId?: string
 }
 
-export default function BookingForm({ packages }: BookingFormProps) {
+export default function BookingForm({ packages, selectedPackageId }: BookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(null)
   
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
-      packageId: "",
+      packageId: selectedPackageId || "",
       name: "",
       email: "",
       phone: "",
+      location: "",
+      additionalOptions: [],
       additionalInfo: "",
     },
   })
-  
-  async function onSubmit(data: BookingFormValues) {
-    setIsSubmitting(true)
-    
-    try {
-      // This would be connected to an API route in a real implementation
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      const selectedPackage = packages.find(pkg => pkg.id === data.packageId);
-      
-      toast.success("Booking request submitted!", {
-        description: `We'll confirm your ${selectedPackage?.name} session on ${format(data.date, "PPP")} shortly.`,
-      })
-      
-      form.reset()
-    } catch (error) {
-      toast.error("Failed to submit booking request", {
-        description: "Please try again later.",
-      })
-    } finally {
-      setIsSubmitting(false)
+
+  useEffect(() => {
+    if (selectedPackageId) {
+      form.setValue("packageId", selectedPackageId)
+      const pkg = packages.find(p => p.id === selectedPackageId)
+      setSelectedPackage(pkg || null)
+    }
+  }, [selectedPackageId, packages, form])
+
+  const getLogisticsFee = (location: string) => {
+    switch (location) {
+      case "mainland":
+        return 25000
+      case "ikoyi-lekki":
+        return 35000
+      case "lekki2-ajah":
+        return 40000
+      default:
+        return 0
     }
   }
+
+  const getHomeServiceFee = (location: string) => {
+    switch (location) {
+      case "mainland":
+        return 55000
+      case "vi-ikoyi":
+        return 85000
+      case "lekki-lekki2":
+        return 105000
+      default:
+        return 0
+    }
+  }
+
+  const additionalOptions = [
+    { id: "express", label: "Express Service (+₦20,000)" },
+    { id: "extra-selections", label: "Extra Selections (+₦10,000 per extra)" },
+    { id: "photobook-30", label: "Photobook 30 pages (+₦150,000)" },
+    { id: "photobook-40", label: "Photobook 40 pages (+₦180,000)" },
+    { id: "frame", label: "Large Frame (+₦35,000)" },
+    { id: "flash-drive", label: "Extra Flash Drive (+₦10,000)" },
+    { id: "drone", label: "Drone Coverage (+₦100,000 per day)" },
+  ]
+
+  const onSubmit = async (data: BookingFormValues) => {
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        toast.success("Booking Request Sent", {
+          description: "We'll get back to you shortly to confirm your booking.",
+        });
+        form.reset();
+        setSelectedPackage(null);
+      } else {
+        throw new Error("Failed to send booking request");
+      }
+    } catch (error) {
+      toast.error("Error", {
+        description: "Failed to send booking request. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   
   return (
     <div id="booking-form" className="bg-card rounded-lg shadow-sm border p-6">
@@ -91,29 +149,112 @@ export default function BookingForm({ packages }: BookingFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Select Package</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select 
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    const pkg = packages.find(p => p.id === value);
+                    setSelectedPackage(pkg || null);
+                  }} 
+                  value={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a package" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="fashion">Fashion Collection</SelectItem>
-                    <SelectItem value="celebrity">Celebrity Portraits</SelectItem>
-                    <SelectItem value="convocation">Convocation</SelectItem>
-                    <SelectItem value="birthday">Birthday Portrait</SelectItem>
-                    <SelectItem value="family">Family Portrait</SelectItem>
-                    <SelectItem value="maternity">Maternity</SelectItem>
-                    <SelectItem value="wedding">Wedding Portrait</SelectItem>
-                    <SelectItem value="pre-wedding">Pre Wedding Portrait</SelectItem>
-                    <SelectItem value="events">Events Candids</SelectItem>
+                    <SelectItem value="portrait">Portrait Session</SelectItem>
+                    <SelectItem value="family-portrait">Family/Group Portrait</SelectItem>
+                    <SelectItem value="fashion-collection">Fashion Collection Shoot</SelectItem>
+                    <SelectItem value="event-quarter">Quarter Day Event</SelectItem>
+                    <SelectItem value="event-half">Half Day Event</SelectItem>
+                    <SelectItem value="event-full">Full Day Event</SelectItem>
+                    <SelectItem value="event-video-basic">Basic Photo + Video</SelectItem>
+                    <SelectItem value="event-video-classic">Classic Photo + Video</SelectItem>
+                    <SelectItem value="event-video-deluxe">Deluxe Photo + Video</SelectItem>
+                    <SelectItem value="training-full">6 Weeks Full Photography Training</SelectItem>
+                    <SelectItem value="training-intensive">4 Weeks Intensive Training</SelectItem>
+                    <SelectItem value="training-editing">2-Day Editing Masterclass</SelectItem>
+                    <SelectItem value="training-lighting">2-Day Lighting Masterclass</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
+          {selectedPackage && (
+            <div className="bg-accent/5 p-4 rounded-lg">
+              <h3 className="font-medium mb-2">Package Details</h3>
+              <p className="text-sm text-muted-foreground mb-2">{selectedPackage.shortDescription}</p>
+              <div className="text-sm space-y-1">
+                <p>Price: ₦{selectedPackage.price.toLocaleString()}{selectedPackage.priceSuffix}</p>
+                <p>Duration: {selectedPackage.duration}</p>
+                <ul className="mt-2 space-y-1">
+                  {selectedPackage.features.map((feature, i) => (
+                    <li key={i} className="flex items-start">
+                      <Check className="h-4 w-4 text-accent mr-2 flex-shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {selectedPackage && (selectedPackage.id.startsWith("event") || selectedPackage.id === "fashion-collection") && (
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your preferred location" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Please provide the address or venue where you'd like the photoshoot to take place
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {selectedPackage && selectedPackage.id.startsWith("event") && (
+            <FormField
+              control={form.control}
+              name="additionalOptions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Additional Options</FormLabel>
+                  <div className="space-y-2">
+                    {additionalOptions.map((option) => (
+                      <div key={option.id} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={option.id}
+                          checked={field.value?.includes(option.id)}
+                          onChange={(e) => {
+                            const newValue = e.target.checked
+                              ? [...(field.value || []), option.id]
+                              : (field.value || []).filter((id) => id !== option.id)
+                            field.onChange(newValue)
+                          }}
+                          className="h-4 w-4 rounded border-gray-300"
+                        />
+                        <label htmlFor={option.id} className="text-sm">
+                          {option.label}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
           <FormField
             control={form.control}
             name="date"

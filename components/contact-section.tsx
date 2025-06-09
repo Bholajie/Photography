@@ -1,6 +1,7 @@
 "use client"
 
 import { Phone, Mail, MapPin, Instagram, Facebook, Twitter } from "lucide-react"
+import { FaTiktok } from "react-icons/fa"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
@@ -33,17 +34,17 @@ export default function ContactSection() {
     {
       icon: <Instagram className="h-6 w-6" />,
       label: "Instagram",
-      href: "https://www.instagram.com/sheyilor_?igsh=MTk0YnMyZDBlcHVjag=="
+      href: "https://instagram.com/sheyilor_"
     },
     {
-      icon: <Facebook className="h-6 w-6" />,
-      label: "Facebook",
-      href: "#"
+      icon: <FaTiktok className="h-6 w-6" />,
+      label: "TikTok",
+      href: "https://tiktok.com/sheyilor_"
     },
     {
       icon: <Twitter className="h-6 w-6" />,
       label: "Twitter",
-      href: "#"
+      href: "https://x.com/its_sheyilor"
     }
   ]
   

@@ -1,5 +1,26 @@
+import { Instagram, Twitter } from "lucide-react"
+import { FaTiktok } from "react-icons/fa"
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  
+  const socialLinks = [
+    {
+      icon: <Instagram className="h-5 w-5" />,
+      name: "Instagram",
+      url: "https://instagram.com/sheyilor_"
+    },
+    {
+      icon: <FaTiktok className="h-5 w-5" />,
+      name: "TikTok",
+      url: "https://tiktok.com/sheyilor_"
+    },
+    {
+      icon: <Twitter className="h-5 w-5" />,
+      name: "Twitter",
+      url: "https://x.com/its_sheyilor"
+    }
+  ];
   
   return (
     <footer className="bg-secondary py-12">
@@ -7,9 +28,23 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="font-display text-xl mb-4">Sheyilor Photography</h3>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-4">
               Capturing life's moments with artistry and emotion.
             </p>
+            <div className="flex space-x-4">
+              {socialLinks.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center h-8 w-8 rounded-full bg-background hover:bg-accent/10 transition-colors"
+                  aria-label={social.name}
+                >
+                  {social.icon}
+                </a>
+              ))}
+            </div>
           </div>
           
           <div>
@@ -47,16 +82,10 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-muted-foreground text-sm">
-            &copy; {currentYear} Sheyilor Photography. All rights reserved.
-          </p>
-          <div className="flex space-x-4 mt-4 md:mt-0">
-            <a href="#" className="text-muted-foreground hover:text-accent text-sm">Privacy Policy</a>
-            <a href="#" className="text-muted-foreground hover:text-accent text-sm">Terms of Service</a>
-          </div>
+        <div className="mt-12 pt-8 border-t border-border text-center text-muted-foreground">
+          <p>&copy; {currentYear} Sheyilor Photography. All rights reserved.</p>
         </div>
       </div>
     </footer>
-  )
+  );
 }
