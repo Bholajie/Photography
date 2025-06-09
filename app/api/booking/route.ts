@@ -1,46 +1,23 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// This would connect to MongoDB in a real implementation
-// The schema below is just for validation
-
-const contactSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  phone: z.string().optional(),
-  subject: z.string().min(2, { message: "Subject must be at least 2 characters" }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters" }),
-});
-
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    
-    // Validate the request body
-    const result = contactSchema.safeParse(body);
-    
-    if (!result.success) {
-      return NextResponse.json(
-        { error: 'Invalid request data', details: result.error.format() },
-        { status: 400 }
-      );
-    }
+    const formData = await request.json();
+    const { name, email, phone, packageId, location, additionalOptions, additionalInfo } = formData;
 
-    const { name, email, phone, subject, message } = result.data;
-    
     const { data, error } = await resend.emails.send({
       from: 'Sheyilor Photography <onboarding@resend.dev>',
       to: 'bolajijohnson19@gmail.com',
-      subject: `New Contact Form Submission: ${subject}`,
+      subject: `New Booking Request from ${name}`,
       html: `
         <!DOCTYPE html>
         <html>
           <head>
             <meta charset="utf-8">
-            <title>New Contact Form Submission</title>
+            <title>New Booking Request</title>
             <style>
               body {
                 font-family: Arial, sans-serif;
@@ -91,27 +68,36 @@ export async function POST(request: Request) {
           </head>
           <body>
             <div class="header">
-              <h1>New Contact Form Submission</h1>
+              <h1>New Booking Request</h1>
             </div>
             
             <div class="content">
               <div class="section">
-                <h2 style="margin-top: 0; color: #1a1a1a;">Contact Information</h2>
+                <h2 style="margin-top: 0; color: #1a1a1a;">Client Information</h2>
                 <p><span class="label">Name:</span> <span class="highlight">${name}</span></p>
                 <p><span class="label">Email:</span> <span class="highlight">${email}</span></p>
-                ${phone ? `<p><span class="label">Phone:</span> <span class="highlight">${phone}</span></p>` : ''}
+                <p><span class="label">Phone:</span> <span class="highlight">${phone}</span></p>
               </div>
 
               <div class="section">
-                <h2 style="margin-top: 0; color: #1a1a1a;">Message Details</h2>
-                <p><span class="label">Subject:</span> <span class="highlight">${subject}</span></p>
-                <p><span class="label">Message:</span></p>
-                <p style="margin-left: 20px; font-style: italic;">${message}</p>
+                <h2 style="margin-top: 0; color: #1a1a1a;">Booking Details</h2>
+                <p><span class="label">Package:</span> <span class="highlight">${packageId}</span></p>
+                ${location ? `<p><span class="label">Location:</span> <span class="highlight">${location}</span></p>` : ''}
+                ${additionalOptions?.length ? `
+                  <p><span class="label">Additional Options:</span></p>
+                  <ul style="margin-top: 5px; margin-left: 20px;">
+                    ${additionalOptions.map((option: string) => `<li>${option}</li>`).join('')}
+                  </ul>
+                ` : ''}
+                ${additionalInfo ? `
+                  <p><span class="label">Additional Info:</span></p>
+                  <p style="margin-left: 20px; font-style: italic;">${additionalInfo}</p>
+                ` : ''}
               </div>
 
               <div class="footer">
-                <p>This is an automated message from Sheyilor Photography's contact form.</p>
-                <p>Please respond to this inquiry within 24 hours.</p>
+                <p>This is an automated message from Sheyilor Photography's booking system.</p>
+                <p>Please respond to this request within 24 hours.</p>
               </div>
             </div>
           </body>
@@ -122,17 +108,10 @@ export async function POST(request: Request) {
     if (error) {
       throw error;
     }
-    
-    return NextResponse.json(
-      { success: true, message: 'Contact form submitted successfully' },
-      { status: 200 }
-    );
+
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Contact form submission error:', error);
-    
-    return NextResponse.json(
-      { error: 'Failed to process contact submission' },
-      { status: 500 }
-    );
+    console.error('Error sending email:', error);
+    return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 });
   }
-}
+} 
