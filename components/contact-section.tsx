@@ -26,7 +26,7 @@ export default function ContactSection() {
     {
       icon: <MapPin className="h-5 w-5" />,
       label: "Location",
-      value: "Orisunbare, Lagos, Nigeria"
+      value: "Lagos, Nigeria"
     }
   ]
   

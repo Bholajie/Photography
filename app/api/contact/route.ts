@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     
     const { data, error } = await resend.emails.send({
       from: 'Sheyilor Photography <onboarding@resend.dev>',
-      to: 'bolajijohnson19@gmail.com',
+      to: 'sheyilorphotography@gmail.com',
       subject: `New Contact Form Submission: ${subject}`,
       html: `
         <!DOCTYPE html>

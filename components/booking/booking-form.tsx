@@ -34,6 +34,7 @@ const bookingFormSchema = z.object({
     message: "Please enter a valid phone number",
   }),
   location: z.string().optional(),
+  locationType: z.string().optional(),
   additionalOptions: z.array(z.string()).optional(),
   additionalInfo: z.string().optional(),
 })
@@ -48,6 +49,7 @@ interface BookingFormProps {
 export default function BookingForm({ packages, selectedPackageId }: BookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(null)
+  const [selectedLocationType, setSelectedLocationType] = useState<string>("")
   
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
@@ -57,6 +59,7 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
       email: "",
       phone: "",
       location: "",
+      locationType: "",
       additionalOptions: [],
       additionalInfo: "",
     },
@@ -104,6 +107,24 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
     { id: "frame", label: "Large Frame (+₦35,000)" },
     { id: "flash-drive", label: "Extra Flash Drive (+₦10,000)" },
     { id: "drone", label: "Drone Coverage (+₦100,000 per day)" },
+  ]
+
+  const locationOptions = [
+    { id: "studio", label: "Studio Session (No additional fee)" },
+    { id: "outdoor", label: "Outdoor Session" },
+    { id: "home", label: "Home Service Studio Setup" },
+  ]
+
+  const outdoorLocations = [
+    { id: "mainland", label: "Mainland (₦25,000)" },
+    { id: "ikoyi-lekki", label: "Ikoyi/Lekki (₦35,000)" },
+    { id: "lekki2-ajah", label: "Lekki 2/Ajah (₦40,000)" },
+  ]
+
+  const homeLocations = [
+    { id: "mainland", label: "Mainland (₦55,000)" },
+    { id: "vi-ikoyi", label: "VI/Ikoyi (₦85,000)" },
+    { id: "lekki-lekki2", label: "Lekki/Lekki 2 (₦105,000)" },
   ]
 
   const onSubmit = async (data: BookingFormValues) => {
@@ -202,23 +223,111 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
             </div>
           )}
 
-          {selectedPackage && (selectedPackage.id.startsWith("event") || selectedPackage.id === "fashion-collection") && (
-            <FormField
-              control={form.control}
-              name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your preferred location" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Please provide the address or venue where you'd like the photoshoot to take place
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
+          {selectedPackage && (selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection") && (
+            <>
+              <FormField
+                control={form.control}
+                name="locationType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Session Location Type</FormLabel>
+                    <Select 
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setSelectedLocationType(value);
+                      }} 
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select location type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {locationOptions.map((option) => (
+                          <SelectItem key={option.id} value={option.id}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {selectedLocationType === "outdoor" && (
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Outdoor Location</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select outdoor location" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {outdoorLocations.map((option) => (
+                            <SelectItem key={option.id} value={option.id}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
-            />
+
+              {selectedLocationType === "home" && (
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Home Service Location</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select home service location" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {homeLocations.map((option) => (
+                            <SelectItem key={option.id} value={option.id}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {selectedLocationType && (
+                <div className="bg-accent/5 p-4 rounded-lg">
+                  <h3 className="font-medium mb-2">Location Fee Details</h3>
+                  {selectedLocationType === "outdoor" && form.watch("location") && (
+                    <p className="text-sm">Outdoor Logistics Fee: ₦{getLogisticsFee(form.watch("location") || "").toLocaleString()}</p>
+                  )}
+                  {selectedLocationType === "home" && form.watch("location") && (
+                    <p className="text-sm">Home Service Setup Fee: ₦{getHomeServiceFee(form.watch("location") || "").toLocaleString()}</p>
+                  )}
+                </div>
+              )}
+            </>
           )}
 
           {selectedPackage && selectedPackage.id.startsWith("event") && (

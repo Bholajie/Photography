@@ -1,16 +1,46 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { format } from 'date-fns';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
     const formData = await request.json();
-    const { name, email, phone, packageId, location, additionalOptions, additionalInfo } = formData;
+    const { 
+      name, 
+      email, 
+      phone, 
+      packageId, 
+      date,
+      locationType,
+      location, 
+      additionalOptions, 
+      additionalInfo 
+    } = formData;
+
+    // Format the date
+    const formattedDate = date ? format(new Date(date), 'MMMM d, yyyy') : 'Not specified';
+
+    // Get location type label
+    const locationTypeLabels = {
+      studio: "Studio Session",
+      outdoor: "Outdoor Session",
+      home: "Home Service Studio Setup"
+    };
+
+    // Get location label
+    const locationLabels = {
+      mainland: "Mainland",
+      "ikoyi-lekki": "Ikoyi/Lekki",
+      "lekki2-ajah": "Lekki 2/Ajah",
+      "vi-ikoyi": "VI/Ikoyi",
+      "lekki-lekki2": "Lekki/Lekki 2"
+    };
 
     const { data, error } = await resend.emails.send({
       from: 'Sheyilor Photography <onboarding@resend.dev>',
-      to: 'bolajijohnson19@gmail.com',
+      to: 'sheyilorphotography@gmail.com',
       subject: `New Booking Request from ${name}`,
       html: `
         <!DOCTYPE html>
@@ -82,7 +112,9 @@ export async function POST(request: Request) {
               <div class="section">
                 <h2 style="margin-top: 0; color: #1a1a1a;">Booking Details</h2>
                 <p><span class="label">Package:</span> <span class="highlight">${packageId}</span></p>
-                ${location ? `<p><span class="label">Location:</span> <span class="highlight">${location}</span></p>` : ''}
+                <p><span class="label">Date:</span> <span class="highlight">${formattedDate}</span></p>
+                ${locationType ? `<p><span class="label">Location Type:</span> <span class="highlight">${locationTypeLabels[locationType as keyof typeof locationTypeLabels] || locationType}</span></p>` : ''}
+                ${location ? `<p><span class="label">Location:</span> <span class="highlight">${locationLabels[location as keyof typeof locationLabels] || location}</span></p>` : ''}
                 ${additionalOptions?.length ? `
                   <p><span class="label">Additional Options:</span></p>
                   <ul style="margin-top: 5px; margin-left: 20px;">

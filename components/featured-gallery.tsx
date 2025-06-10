@@ -14,10 +14,10 @@ import 'swiper/css/navigation';
 
 const featuredCategories = [
   {
-    id: "fashion",
-    name: "Fashion Collection",
-    image: "/images/FashionCollection/SHEY5991.jpg",
-    description: "Professional fashion photography showcasing style and elegance"
+    id: "birthday",
+    name: "Birthday Portrait",
+    image: "/images/BirthdayPortrait/SHEY7690.jpg",
+    description: "Special birthday portrait sessions celebrating milestones"
   },
   {
     id: "celebrity",
@@ -26,16 +26,22 @@ const featuredCategories = [
     description: "Exclusive celebrity portrait photography capturing star power"
   },
   {
+    id: "wedding-portraits",
+    name: "Wedding Portraits",
+    image: "/images/WeddingPortraits/SHEY3763.jpg",
+    description: "Timeless wedding portraits capturing the joy and love of your special day."
+  },
+  {
+    id: "fashion",
+    name: "Fashion Collection",
+    image: "/images/FashionCollection/SHEY5991.jpg",
+    description: "Professional fashion photography showcasing style and elegance"
+  },
+  {
     id: "convocation",
     name: "Convocation",
     image: "/images/Convocation/SHEY6382.jpg",
     description: "Memorable graduation photography capturing academic achievements"
-  },
-  {
-    id: "birthday",
-    name: "Birthday Portrait",
-    image: "/images/BirthdayPortrait/SHEY7690.jpg",
-    description: "Special birthday portrait sessions celebrating milestones"
   },
   {
     id: "family",
@@ -48,12 +54,6 @@ const featuredCategories = [
     name: "Maternity",
     image: "/images/Maternity/SHEY1801.jpg",
     description: "Beautiful maternity photography celebrating motherhood"
-  },
-  {
-    id: "wedding-portraits",
-    name: "Wedding Portraits",
-    image: "/images/WeddingPortraits/SHEY3763.jpg",
-    description: "Timeless wedding portraits capturing the joy and love of your special day."
   },
   {
     id: "pre-wedding-portraits",
@@ -89,7 +89,7 @@ export default function FeaturedGallery() {
             Explore our diverse collection of photography work across various styles and occasions
           </p>
         </motion.div>
-        <div className="relative px-12">
+        <div className="relative px-4 md:px-8">
           <Swiper
             modules={[Navigation]}
             navigation={{
@@ -104,11 +104,12 @@ export default function FeaturedGallery() {
               swiper.navigation.init();
               swiper.navigation.update();
             }}
-            spaceBetween={32}
+            spaceBetween={16}
             slidesPerView={1}
             breakpoints={{
-              768: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 }
+              640: { slidesPerView: 1.5, spaceBetween: 20 },
+              768: { slidesPerView: 2, spaceBetween: 24 },
+              1024: { slidesPerView: 2.5, spaceBetween: 32 }
             }}
             className="!pb-12"
           >
@@ -120,7 +121,7 @@ export default function FeaturedGallery() {
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
-                  <div className="aspect-[3/4] relative">
+                  <div className="aspect-[4/5] relative">
                     <Image 
                       src={category.image}
                       alt={category.name}
