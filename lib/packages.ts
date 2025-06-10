@@ -16,7 +16,8 @@ export async function getPackages(): Promise<PackageType[]> {
         "4 images per outfit",
         "Professional editing",
         "2 working days delivery",
-        "Online gallery"
+        "Online gallery",
+        "Logistics fee applies based on location"
       ],
       image: "/images/CelebrityPortraits/SHEY6090.jpg"
     },
@@ -32,7 +33,8 @@ export async function getPackages(): Promise<PackageType[]> {
         "5 images total per outfit",
         "Professional editing",
         "2 working days delivery",
-        "Online gallery"
+        "Online gallery",
+        "Logistics fee applies based on location"
       ],
       image: "/images/FamilyPortrait/SHEY7165.jpg"
     },
@@ -49,7 +51,8 @@ export async function getPackages(): Promise<PackageType[]> {
         "Professional editing",
         "2 working days delivery",
         "Extra images: ₦10,000 per extra",
-        "Online gallery"
+        "Online gallery",
+        "Logistics fee applies based on location"
       ],
       image: "/images/FashionCollection/SHEY5991.jpg"
     },

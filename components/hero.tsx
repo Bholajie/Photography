@@ -7,28 +7,12 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
 const heroImages = [
-  "/images/hero/SHEY1262.jpg",
-  "/images/hero/SHEY8892.jpg",
-  "/images/hero/SHEY9790.jpg",
-  "/images/hero/SHEY0039.jpg",
-  "/images/hero/SHEY3329.jpg",
-  "/images/hero/SHEY1717.jpg",
-  "/images/hero/SHEY7165.jpg",
-  "/images/hero/SHEY7690.jpg",
-  "/images/hero/SHEY9463.jpg",
-  "/images/hero/SHEY0578.jpg",
-  "/images/hero/SHEY7452.jpg",
-  "/images/hero/SHEY6382.jpg",
-  "/images/hero/SHEY6090.jpg",
-  "/images/hero/IMG_0336.JPEG",
-  "/images/hero/IMG_0094.JPEG",
-  "/images/hero/SHEY1418.jpg",
-  "/images/hero/SHEY4400.jpg",
-  "/images/hero/SHEY6044.jpg",
-  "/images/hero/SHEY0859.jpg",
-  "/images/hero/SHEY7098.jpg",
-  "/images/hero/SHEY0408.jpg",
-  "/images/hero/SHEY9212_(2)1.jpg"
+  "/images/HeroSection/2.jpg",
+  "/images/HeroSection/3.jpg",
+  "/images/HeroSection/4.jpg",
+  "/images/HeroSection/5.jpg",
+  "/images/HeroSection/7.jpg",
+  "/images/HeroSection/Untitled-2.jpg",
 ]
 
 export default function Hero() {

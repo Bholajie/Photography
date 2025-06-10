@@ -95,14 +95,6 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Button asChild size="sm" variant="outline">
-            <Link href="https://www.instagram.com/sheyilor_?igsh=MTk0YnMyZDBlcHVjag==" target="_blank" rel="noopener noreferrer">
-              Instagram
-            </Link>
-          </Button>
-          <Button asChild size="sm" variant="outline">
-            <Link href="/book">Book Session</Link>
-          </Button>
           <ModeToggle />
         </nav>
         
@@ -142,28 +134,6 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <div className="pt-6 w-full">
-              <Button asChild className="w-full">
-                <Link 
-                  href="/book" 
-                  onClick={() => toggleMobileMenu()}
-                >
-                  Book Session
-                </Link>
-              </Button>
-            </div>
-            <div className="w-full">
-              <Button asChild variant="outline" className="w-full">
-                <Link 
-                  href="https://www.instagram.com/sheyilor_?igsh=MTk0YnMyZDBlcHVjag==" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  onClick={() => toggleMobileMenu()}
-                >
-                  Instagram
-                </Link>
-              </Button>
-            </div>
           </nav>
         </div>
       </div>

@@ -75,7 +75,7 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Contact</h4>
             <address className="not-italic text-muted-foreground">
-              <p>Orisunbare, Nigeria</p>
+              <p>Lagos, Nigeria</p>
               <p className="mt-2">+2348167976266</p>
               <p className="mt-2">sheyilorphotography@gmail.com</p>
             </address>

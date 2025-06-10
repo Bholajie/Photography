@@ -35,9 +35,6 @@ export default function BookingHeader() {
             <h3 className="font-medium mb-2">{step.title}</h3>
             <p className="text-sm text-muted-foreground text-center">{step.description}</p>
             
-            {index < bookingSteps.length - 1 && (
-              <div className="hidden md:block h-0.5 w-full bg-border absolute right-0 top-1/2 transform translate-x-1/2"></div>
-            )}
           </div>
         ))}
       </div>
