@@ -21,7 +21,8 @@ export default function PackageList({ packages, onSelectPackage }: PackageListPr
   const portraitPackages = packages.filter(pkg => 
     pkg.id === "portrait" || 
     pkg.id === "family-portrait" || 
-    pkg.id === "fashion-collection"
+    pkg.id === "fashion-collection" ||
+    pkg.id === "convocation"
   )
 
   const eventPackages = packages.filter(pkg => 
@@ -41,11 +42,12 @@ export default function PackageList({ packages, onSelectPackage }: PackageListPr
       <h2 className="text-2xl font-display mb-4">Choose Your Package</h2>
       
       <Tabs defaultValue="portrait" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="portrait">Portrait</TabsTrigger>
+        <TabsList className="flex overflow-x-auto pl-4 gap-2 bg-muted whitespace-nowrap no-scrollbar scroll-px-4 md:grid md:grid-cols-5 md:gap-4 md:p-2 md:pl-0">
+          <TabsTrigger value="portrait" className="ml-16 md:ml-0">Portrait</TabsTrigger>
           <TabsTrigger value="event">Events</TabsTrigger>
           <TabsTrigger value="event-video">Photo + Video</TabsTrigger>
-          <TabsTrigger value="training">Training</TabsTrigger>
+          <TabsTrigger value="wedding">Wedding</TabsTrigger>
+          <TabsTrigger value="training" >Training</TabsTrigger>
         </TabsList>
 
         <TabsContent value="portrait" className="space-y-6">
@@ -64,6 +66,32 @@ export default function PackageList({ packages, onSelectPackage }: PackageListPr
           {eventVideoPackages.map((pkg, index) => (
             <PackageCard key={pkg.id} pkg={pkg} index={index} onSelect={onSelectPackage} />
           ))}
+        </TabsContent>
+
+        <TabsContent value="wedding" className="space-y-6">
+          <div className="bg-accent/5 p-6 rounded-lg">
+            <div className="relative w-full h-[300px] mb-6 rounded-lg overflow-hidden">
+              <Image
+                src="/images/WeddingPortraits/SHEY9212_(2)1.jpg"
+                alt="Wedding Photography"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
+            <h3 className="text-xl font-semibold mb-4">Wedding Photography</h3>
+            <p className="text-muted-foreground mb-4">
+              Let's document your lovely union! Jump on a consultation call with our lead photographer. 
+              Provide your contact details or fill in the information and we will contact you within 24 hours.
+            </p>
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={() => onSelectPackage("wedding")}
+            >
+              Book Wedding Consultation
+            </Button>
+          </div>
         </TabsContent>
 
         <TabsContent value="training" className="space-y-6">

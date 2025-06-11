@@ -7,25 +7,25 @@ import { useRef } from "react"
 
 const testimonials = [
   {
-    name: "Emma Thompson",
+    name: "Adebayo Ogunleye",
     role: "Wedding Client",
     quote: "Working with this photographer for our wedding was the best decision we made. They captured every special moment with such artistry and emotion. We couldn't be happier with the results!",
     rating: 5
   },
   {
-    name: "James Wilson",
+    name: "Chioma Okonkwo",
     role: "Portrait Session",
     quote: "I was nervous about my portrait session, but they made me feel completely at ease. The photos turned out better than I could have imagined and truly captured my personality.",
     rating: 5
   },
   {
-    name: "Sophia Rodriguez",
+    name: "Oluwaseun Abosede",
     role: "Family Photoshoot",
     quote: "Our family photos are absolutely stunning! They were amazing with our children and somehow managed to get perfect shots even with our energetic toddler running around.",
     rating: 5
   },
   {
-    name: "Michael Chen",
+    name: "Folake Adeyemi",
     role: "Engagement Photos",
     quote: "Our engagement photos are everything we wanted and more. The attention to detail and creativity in every shot made for a truly unique collection of memories we'll cherish forever.",
     rating: 5

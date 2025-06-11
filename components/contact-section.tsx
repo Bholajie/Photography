@@ -39,7 +39,7 @@ export default function ContactSection() {
     {
       icon: <FaTiktok className="h-6 w-6" />,
       label: "TikTok",
-      href: "https://tiktok.com/sheyilor_"
+      href: "https://www.tiktok.com/@sheyilor_"
     },
     {
       icon: <Twitter className="h-6 w-6" />,

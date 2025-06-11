@@ -35,6 +35,7 @@ const bookingFormSchema = z.object({
   }),
   location: z.string().optional(),
   locationType: z.string().optional(),
+  address: z.string().optional(),
   additionalOptions: z.array(z.string()).optional(),
   additionalInfo: z.string().optional(),
 })
@@ -60,6 +61,7 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
       phone: "",
       location: "",
       locationType: "",
+      address: "",
       additionalOptions: [],
       additionalInfo: "",
     },
@@ -187,12 +189,14 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
                     <SelectItem value="portrait">Portrait Session</SelectItem>
                     <SelectItem value="family-portrait">Family/Group Portrait</SelectItem>
                     <SelectItem value="fashion-collection">Fashion Collection Shoot</SelectItem>
+                    <SelectItem value="convocation">Convocation Session</SelectItem>
                     <SelectItem value="event-quarter">Quarter Day Event</SelectItem>
                     <SelectItem value="event-half">Half Day Event</SelectItem>
                     <SelectItem value="event-full">Full Day Event</SelectItem>
                     <SelectItem value="event-video-basic">Basic Photo + Video</SelectItem>
                     <SelectItem value="event-video-classic">Classic Photo + Video</SelectItem>
                     <SelectItem value="event-video-deluxe">Deluxe Photo + Video</SelectItem>
+                    <SelectItem value="wedding">Wedding Photography</SelectItem>
                     <SelectItem value="training-full">6 Weeks Full Photography Training</SelectItem>
                     <SelectItem value="training-intensive">4 Weeks Intensive Training</SelectItem>
                     <SelectItem value="training-editing">2-Day Editing Masterclass</SelectItem>
@@ -207,19 +211,28 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
           {selectedPackage && (
             <div className="bg-accent/5 p-4 rounded-lg">
               <h3 className="font-medium mb-2">Package Details</h3>
-              <p className="text-sm text-muted-foreground mb-2">{selectedPackage.shortDescription}</p>
-              <div className="text-sm space-y-1">
-                <p>Price: ₦{selectedPackage.price.toLocaleString()}{selectedPackage.priceSuffix}</p>
-                <p>Duration: {selectedPackage.duration}</p>
-                <ul className="mt-2 space-y-1">
-                  {selectedPackage.features.map((feature, i) => (
-                    <li key={i} className="flex items-start">
-                      <Check className="h-4 w-4 text-accent mr-2 flex-shrink-0 mt-0.5" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {selectedPackage.id === "wedding" ? (
+                <div className="text-sm space-y-2">
+                  <p className="text-muted-foreground">Let's document your lovely union! We'll schedule a consultation call with our lead photographer to discuss your wedding photography needs.</p>
+                  <p className="text-muted-foreground">Please provide your contact details below, and we'll contact you within 24 hours to schedule the consultation.</p>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground mb-2">{selectedPackage.shortDescription}</p>
+                  <div className="text-sm space-y-1">
+                    <p>Price: ₦{selectedPackage.price.toLocaleString()}{selectedPackage.priceSuffix}</p>
+                    <p>Duration: {selectedPackage.duration}</p>
+                    <ul className="mt-2 space-y-1">
+                      {selectedPackage.features.map((feature, i) => (
+                        <li key={i} className="flex items-start">
+                          <Check className="h-4 w-4 text-accent mr-2 flex-shrink-0 mt-0.5" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -257,33 +270,56 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
               />
 
               {selectedLocationType === "outdoor" && (
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Outdoor Location</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        value={field.value}
-                      >
+                <>
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Area Location</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select area location" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {outdoorLocations.map((option) => (
+                              <SelectItem key={option.id} value={option.id}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Exact Address</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select outdoor location" />
-                          </SelectTrigger>
+                          <Textarea 
+                            placeholder="Please provide the complete address where the shoot will take place..."
+                            className="resize-y min-h-24"
+                            {...field}
+                          />
                         </FormControl>
-                        <SelectContent>
-                          {outdoorLocations.map((option) => (
-                            <SelectItem key={option.id} value={option.id}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormDescription>
+                          Please provide the full address including landmarks or directions to help us locate the shoot location easily.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
               )}
 
               {selectedLocationType === "home" && (
@@ -465,6 +501,9 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
                       {...field}
                     />
                   </FormControl>
+                  <FormDescription>
+                    Any specific requirements or preferences for your session.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
