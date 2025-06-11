@@ -10,13 +10,14 @@ export async function getPackages(): Promise<PackageType[]> {
       price: 85000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
-      shortDescription: "Professional portrait photography at SHEYILOR STUDIO",
+      shortDescription: "Professional portrait photography at SHEYILOR STUDIO (Available between 9am - 5pm)",
       features: [
         "Location: SHEYILOR STUDIO",
         "4 images per outfit",
         "Professional editing",
         "2 working days delivery",
         "Online gallery",
+        "Available between 9am - 5pm",
         "Logistics fee applies based on location"
       ],
       image: "/images/CelebrityPortraits/SHEY6090.jpg"
@@ -27,13 +28,14 @@ export async function getPackages(): Promise<PackageType[]> {
       price: 105000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
-      shortDescription: "Perfect for family and group portraits at SHEYILOR STUDIO",
+      shortDescription: "Perfect for family and group portraits at SHEYILOR STUDIO (Available between 9am - 5pm)",
       features: [
         "Location: SHEYILOR STUDIO",
         "5 images total per outfit",
         "Professional editing",
         "2 working days delivery",
         "Online gallery",
+        "Available between 9am - 5pm",
         "Logistics fee applies based on location"
       ],
       image: "/images/FamilyPortrait/SHEY7165.jpg"
@@ -44,10 +46,11 @@ export async function getPackages(): Promise<PackageType[]> {
       price: 25000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
-      shortDescription: "Professional fashion photography at client's location",
+      shortDescription: "Professional fashion photography for 10+ outfits at client's location",
       features: [
         "Location: Client's location",
         "3 images per outfit",
+        "Minimum 10 outfits",
         "Professional editing",
         "2 working days delivery",
         "Extra images: ₦10,000 per extra",
@@ -63,11 +66,12 @@ export async function getPackages(): Promise<PackageType[]> {
       price: 300000,
       priceSuffix: " (Less Logistics)",
       duration: "4 Working days",
-      shortDescription: "1-4 hours of event coverage",
+      shortDescription: "1-4 hours of event coverage (Available between 8am - 7pm)",
       features: [
         "Location: Client's location",
         "100-120 images",
         "4 working days delivery",
+        "Available between 8am - 7pm",
         "Online gallery",
         "Logistics fee applies based on location"
       ],
@@ -79,12 +83,13 @@ export async function getPackages(): Promise<PackageType[]> {
       price: 450000,
       priceSuffix: " (Less Logistics)",
       duration: "4 Working days",
-      shortDescription: "6 hours of event coverage",
+      shortDescription: "6 hours of event coverage (Available between 8am - 7pm)",
       features: [
         "Location: Client's location",
         "150-200 images",
         "4 professional retouched images",
         "4 working days delivery",
+        "Available between 8am - 7pm",
         "Online gallery",
         "Logistics fee applies based on location"
       ],
@@ -96,12 +101,13 @@ export async function getPackages(): Promise<PackageType[]> {
       price: 600000,
       priceSuffix: " (Less Logistics)",
       duration: "4 Working days",
-      shortDescription: "8 hours of event coverage",
+      shortDescription: "8 hours of event coverage (Available between 8am - 7pm)",
       features: [
         "Location: Client's location",
         "200-300 images",
         "8 professional retouched images",
         "4 working days delivery",
+        "Available between 8am - 7pm",
         "Online gallery",
         "Logistics fee applies based on location"
       ],
@@ -226,6 +232,24 @@ export async function getPackages(): Promise<PackageType[]> {
         "Tailored for mastering lighting control"
       ],
       image: "/images/FashionCollection/SHEY6044.jpg"
+    },
+    {
+      id: "convocation",
+      name: "Convocation Session",
+      price: 50000,
+      priceSuffix: " per outfit",
+      duration: "2 Working days",
+      shortDescription: "Professional convocation photography at SHEYILOR STUDIO",
+      features: [
+        "Location: SHEYILOR STUDIO",
+        "4 images per outfit",
+        "Professional editing",
+        "2 working days delivery",
+        "Online gallery",
+        "Available between 9am - 5pm",
+        "Logistics fee applies based on location"
+      ],
+      image: "/images/Convocation/SHEY6382.jpg"
     }
   ];
 }

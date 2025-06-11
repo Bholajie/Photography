@@ -13,7 +13,7 @@ export default function Footer() {
     {
       icon: <FaTiktok className="h-5 w-5" />,
       name: "TikTok",
-      url: "https://tiktok.com/sheyilor_"
+      url: "https://www.tiktok.com/@sheyilor_"
     },
     {
       icon: <Twitter className="h-5 w-5" />,
