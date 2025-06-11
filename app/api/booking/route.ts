@@ -13,6 +13,7 @@ export async function POST(request: Request) {
       phone, 
       packageId, 
       date,
+      time,
       locationType,
       location, 
       address,
@@ -22,6 +23,7 @@ export async function POST(request: Request) {
 
     // Format the date
     const formattedDate = date ? format(new Date(date), 'MMMM d, yyyy') : 'Not specified';
+    const formattedTime = time ? format(new Date(`2000-01-01T${time}`), 'h:mm a') : 'Not specified';
 
     // Get location type label
     const locationTypeLabels = {
@@ -141,7 +143,10 @@ export async function POST(request: Request) {
               <div class="section">
                 <h2 style="margin-top: 0; color: #1a1a1a;">${isWedding ? 'Wedding Consultation Details' : 'Booking Details'}</h2>
                 <p><span class="label">Package:</span> <span class="highlight">${packageLabels[packageId as keyof typeof packageLabels] || packageId}</span></p>
-                ${!isWedding ? `<p><span class="label">Date:</span> <span class="highlight">${formattedDate}</span></p>` : ''}
+                ${!isWedding ? `
+                  <p><span class="label">Date:</span> <span class="highlight">${formattedDate}</span></p>
+                  <p><span class="label">Time:</span> <span class="highlight">${formattedTime}</span></p>
+                ` : ''}
                 ${locationType ? `<p><span class="label">Location Type:</span> <span class="highlight">${locationTypeLabels[locationType as keyof typeof locationTypeLabels] || locationType}</span></p>` : ''}
                 ${location ? `<p><span class="label">Location:</span> <span class="highlight">${locationLabels[location as keyof typeof locationLabels] || location}</span></p>` : ''}
                 ${address ? `
@@ -240,6 +245,7 @@ export async function POST(request: Request) {
                   <li>Any specific requirements or concerns</li>
                 </ul>` :
                 `<p>Thank you for choosing Sheyilor Photography! We've received your booking request for ${packageLabels[packageId as keyof typeof packageLabels] || packageId}.</p>
+                <p>Your session is scheduled for ${formattedDate} at ${formattedTime}.</p>
                 <p>We'll review your request and get back to you within 24 hours to confirm your booking and discuss the next steps.</p>`
               }
               
