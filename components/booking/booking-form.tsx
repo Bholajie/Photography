@@ -16,6 +16,8 @@ import { CalendarIcon, Check } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { PackageType } from "@/lib/types"
+import { Checkbox } from "@/components/ui/checkbox"
+import PriceCalculator from "./price-calculator"
 
 const bookingFormSchema = z.object({
   packageId: z.string({
@@ -41,6 +43,9 @@ const bookingFormSchema = z.object({
   address: z.string().optional(),
   additionalOptions: z.array(z.string()).optional(),
   additionalInfo: z.string().optional(),
+  numberOfOutfits: z.number().min(1, {
+    message: "Please select a valid number of outfits",
+  }),
 })
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>
@@ -54,6 +59,7 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(null)
   const [selectedLocationType, setSelectedLocationType] = useState<string>("")
+  const [numberOfOutfits, setNumberOfOutfits] = useState<number>(1)
   
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
@@ -68,6 +74,7 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
       additionalOptions: [],
       additionalInfo: "",
       time: "",
+      numberOfOutfits: 1,
     },
   })
 
@@ -240,58 +247,30 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
             </div>
           )}
 
-          {selectedPackage && (selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection") && (
+          {selectedPackage && (
             <>
-              <FormField
-                control={form.control}
-                name="locationType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Session Location Type</FormLabel>
-                    <Select 
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        setSelectedLocationType(value);
-                      }} 
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select location type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {locationOptions.map((option) => (
-                          <SelectItem key={option.id} value={option.id}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {selectedLocationType === "outdoor" && (
+              {(selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection") && (
                 <>
                   <FormField
                     control={form.control}
-                    name="location"
+                    name="locationType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Area Location</FormLabel>
+                        <FormLabel>Session Location Type</FormLabel>
                         <Select 
-                          onValueChange={field.onChange} 
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            setSelectedLocationType(value);
+                          }} 
                           value={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select area location" />
+                              <SelectValue placeholder="Select location type" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {outdoorLocations.map((option) => (
+                            {locationOptions.map((option) => (
                               <SelectItem key={option.id} value={option.id}>
                                 {option.label}
                               </SelectItem>
@@ -303,105 +282,180 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Exact Address</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Please provide the complete address where the shoot will take place..."
-                            className="resize-y min-h-24"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Please provide the full address including landmarks or directions to help us locate the shoot location easily.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {selectedLocationType === "outdoor" && (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name="location"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Area Location</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              value={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select area location" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {outdoorLocations.map((option) => (
+                                  <SelectItem key={option.id} value={option.id}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="address"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Exact Address</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                placeholder="Please provide the complete address where the shoot will take place..."
+                                className="resize-y min-h-24"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Please provide the full address including landmarks or directions to help us locate the shoot location easily.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
+
+                  {selectedLocationType === "home" && (
+                    <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Home Service Location</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            value={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select home service location" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {homeLocations.map((option) => (
+                                <SelectItem key={option.id} value={option.id}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </>
               )}
 
-              {selectedLocationType === "home" && (
+              {(selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection") && (
                 <FormField
                   control={form.control}
-                  name="location"
+                  name="numberOfOutfits"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Home Service Location</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select home service location" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {homeLocations.map((option) => (
-                            <SelectItem key={option.id} value={option.id}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormLabel>Number of Outfits</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          min={1}
+                          {...field}
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value)
+                            field.onChange(value)
+                            setNumberOfOutfits(value)
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Select the number of outfits for your session
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               )}
 
-              {selectedLocationType && (
-                <div className="bg-accent/5 p-4 rounded-lg">
-                  <h3 className="font-medium mb-2">Location Fee Details</h3>
-                  {selectedLocationType === "outdoor" && form.watch("location") && (
-                    <p className="text-sm">Outdoor Logistics Fee: ₦{getLogisticsFee(form.watch("location") || "").toLocaleString()}</p>
-                  )}
-                  {selectedLocationType === "home" && form.watch("location") && (
-                    <p className="text-sm">Home Service Setup Fee: ₦{getHomeServiceFee(form.watch("location") || "").toLocaleString()}</p>
-                  )}
-                </div>
-              )}
-            </>
-          )}
-
-          {selectedPackage && selectedPackage.id.startsWith("event") && (
-            <FormField
-              control={form.control}
-              name="additionalOptions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Additional Options</FormLabel>
-                  <div className="space-y-2">
-                    {additionalOptions.map((option) => (
-                      <div key={option.id} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          id={option.id}
-                          checked={field.value?.includes(option.id)}
-                          onChange={(e) => {
-                            const newValue = e.target.checked
-                              ? [...(field.value || []), option.id]
-                              : (field.value || []).filter((id) => id !== option.id)
-                            field.onChange(newValue)
-                          }}
-                          className="h-4 w-4 rounded border-gray-300"
-                        />
-                        <label htmlFor={option.id} className="text-sm">
-                          {option.label}
-                        </label>
+              {selectedPackage.id.startsWith("event-") && (
+                <FormField
+                  control={form.control}
+                  name="additionalOptions"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel>Additional Options</FormLabel>
+                        <FormDescription>
+                          Select any additional services you'd like to add to your package
+                        </FormDescription>
                       </div>
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {additionalOptions.map((option) => (
+                          <FormField
+                            key={option.id}
+                            control={form.control}
+                            name="additionalOptions"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={option.id}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(option.id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...field.value || [], option.id])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== option.id
+                                              )
+                                            )
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    {option.label}
+                                  </FormLabel>
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
-            />
+
+              <PriceCalculator
+                selectedPackage={selectedPackage}
+                numberOfOutfits={selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection" ? numberOfOutfits : 1}
+                locationType={selectedLocationType}
+                location={form.watch("location") || ""}
+                additionalOptions={form.watch("additionalOptions") || []}
+              />
+            </>
           )}
 
           <FormField
