@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { format } from 'date-fns';
+import { getPackages } from '@/lib/packages';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
     const formData = await request.json();
+    const packages = await getPackages();
     const { 
       name, 
       email, 
@@ -18,8 +20,56 @@ export async function POST(request: Request) {
       location, 
       address,
       additionalOptions, 
-      additionalInfo 
+      additionalInfo,
+      numberOfOutfits
     } = formData;
+
+    // Calculate total price
+    const selectedPackage = packages.find(p => p.id === packageId);
+    const basePrice = selectedPackage ? selectedPackage.price * numberOfOutfits : 0;
+    
+    const getLogisticsFee = (location: string) => {
+      switch (location) {
+        case "mainland": return 25000;
+        case "ikoyi-lekki": return 35000;
+        case "lekki2-ajah": return 40000;
+        default: return 0;
+      }
+    };
+
+    const getHomeServiceFee = (location: string) => {
+      switch (location) {
+        case "mainland": return 55000;
+        case "vi-ikoyi": return 85000;
+        case "lekki-lekki2": return 105000;
+        default: return 0;
+      }
+    };
+
+    const getAdditionalOptionPrice = (option: string): { label: string; price: number } => {
+      if (option.includes("express")) return { label: "Express Service", price: 20000 }
+      if (option.includes("extra-selections")) return { label: "Extra Selections", price: 10000 }
+      if (option.includes("photobook-30")) return { label: "Photobook 30 pages", price: 150000 }
+      if (option.includes("photobook-40")) return { label: "Photobook 40 pages", price: 180000 }
+      if (option.includes("frame")) return { label: "Large Frame", price: 35000 }
+      if (option.includes("flash-drive")) return { label: "Extra Flash Drive", price: 10000 }
+      if (option.includes("drone")) return { label: "Drone Coverage", price: 100000 }
+      return { label: option, price: 0 }
+    }
+
+    const calculateAdditionalOptionsCost = (options: string[]) => {
+      return options.map(option => getAdditionalOptionPrice(option))
+    }
+
+    const additionalOptionsDetails = calculateAdditionalOptionsCost(additionalOptions || [])
+    const additionalCost = additionalOptionsDetails.reduce((sum, option) => sum + option.price, 0)
+
+    const locationFee = locationType === "outdoor" 
+      ? getLogisticsFee(location)
+      : locationType === "home"
+      ? getHomeServiceFee(location)
+      : 0;
+    const totalPrice = basePrice + locationFee + additionalCost;
 
     // Format the date
     const formattedDate = date ? format(new Date(date), 'MMMM d, yyyy') : 'Not specified';
@@ -142,27 +192,31 @@ export async function POST(request: Request) {
 
               <div class="section">
                 <h2 style="margin-top: 0; color: #1a1a1a;">${isWedding ? 'Wedding Consultation Details' : 'Booking Details'}</h2>
-                <p><span class="label">Package:</span> <span class="highlight">${packageLabels[packageId as keyof typeof packageLabels] || packageId}</span></p>
-                ${!isWedding ? `
-                  <p><span class="label">Date:</span> <span class="highlight">${formattedDate}</span></p>
-                  <p><span class="label">Time:</span> <span class="highlight">${formattedTime}</span></p>
-                ` : ''}
-                ${locationType ? `<p><span class="label">Location Type:</span> <span class="highlight">${locationTypeLabels[locationType as keyof typeof locationTypeLabels] || locationType}</span></p>` : ''}
-                ${location ? `<p><span class="label">Location:</span> <span class="highlight">${locationLabels[location as keyof typeof locationLabels] || location}</span></p>` : ''}
-                ${address ? `
-                  <p><span class="label">Exact Address:</span></p>
-                  <p style="margin-left: 20px; font-style: italic;">${address}</p>
-                ` : ''}
-                ${additionalOptions?.length ? `
-                  <p><span class="label">Additional Options:</span></p>
-                  <ul style="margin-top: 5px; margin-left: 20px;">
-                    ${additionalOptions.map((option: string) => `<li>${option}</li>`).join('')}
-                  </ul>
-                ` : ''}
-                ${additionalInfo ? `
-                  <p><span class="label">Additional Info:</span></p>
-                  <p style="margin-left: 20px; font-style: italic;">${additionalInfo}</p>
-                ` : ''}
+                <div class="section">
+                  <h3>Booking Details</h3>
+                  <p><span class="label">Package:</span> ${packageLabels[packageId as keyof typeof packageLabels] || packageId}</p>
+                  <p><span class="label">Date:</span> ${formattedDate}</p>
+                  <p><span class="label">Time:</span> ${formattedTime}</p>
+                  ${numberOfOutfits ? `<p><span class="label">Number of Outfits:</span> ${numberOfOutfits}</p>` : ''}
+                  <p><span class="label">Location Type:</span> ${locationTypeLabels[locationType as keyof typeof locationTypeLabels] || locationType}</p>
+                  ${location ? `<p><span class="label">Location:</span> ${locationLabels[location as keyof typeof locationLabels] || location}</p>` : ''}
+                  ${address ? `<p><span class="label">Address:</span> ${address}</p>` : ''}
+                </div>
+
+                <div class="section">
+                  <h3>Price Breakdown</h3>
+                  <p><span class="label">Base Price:</span> ₦${basePrice.toLocaleString()}</p>
+                  ${locationFee > 0 ? `<p><span class="label">${locationType === "outdoor" ? "Logistics Fee" : "Home Service Fee"}:</span> ₦${locationFee.toLocaleString()}</p>` : ''}
+                  ${additionalOptionsDetails.length > 0 ? `
+                    <p><span class="label">Additional Options:</span></p>
+                    <div style="margin-left: 20px;">
+                      ${additionalOptionsDetails.map(option => `
+                        <p>${option.label}: ₦${option.price.toLocaleString()}</p>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+                  <p><span class="label highlight">Total Cost:</span> ₦${totalPrice.toLocaleString()}</p>
+                </div>
               </div>
 
               <div class="footer">
@@ -184,7 +238,7 @@ export async function POST(request: Request) {
 
     // Send confirmation email to client
     const clientEmail = await resend.emails.send({
-      from: 'Sheyilor Photography <onboarding@resend.dev>',
+      from: 'Sheyilor Photography <bookings@sheyilorphotography.com>',
       to: email,
       subject: isWedding ? 'Wedding Photography Consultation Request Received' : 'Booking Request Received',
       html: `
