@@ -235,7 +235,7 @@ export default function DiscountCountdown() {
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-2xl mx-auto">
               <p className="text-white/80 mb-6 text-sm md:text-base">
                 <span className="font-semibold">Terms:</span> Offer valid for bookings made from July 1st, 2025 onwards. 
-                Use coupon code <span className="font-mono bg-white/20 px-2 py-1 rounded">SHEYLORPHOTOGRAPHY</span> at checkout.
+                Use coupon code <span className="font-mono bg-white/20 px-2 py-1 rounded">Sheyilor15</span> at checkout.
               </p>
               
               <Button
