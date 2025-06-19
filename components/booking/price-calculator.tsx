@@ -6,6 +6,7 @@ interface PriceCalculatorProps {
   locationType: string
   location: string
   additionalOptions: string[]
+  discountPercentage?: number
 }
 
 export default function PriceCalculator({
@@ -13,7 +14,8 @@ export default function PriceCalculator({
   numberOfOutfits,
   locationType,
   location,
-  additionalOptions
+  additionalOptions,
+  discountPercentage = 0
 }: PriceCalculatorProps) {
   if (!selectedPackage) return null
 
@@ -76,7 +78,9 @@ export default function PriceCalculator({
 
   const additionalOptionsDetails = isEventPackage ? calculateAdditionalOptionsCost(additionalOptions) : []
   const additionalCost = additionalOptionsDetails.reduce((sum, option) => sum + option.price, 0)
-  const totalPrice = basePrice + locationFee + additionalCost
+  const subtotal = basePrice + locationFee + additionalCost
+  const discountAmount = (subtotal * discountPercentage) / 100
+  const totalPrice = subtotal - discountAmount
 
   return (
     <div className="bg-accent/5 p-4 rounded-lg space-y-2">
@@ -103,7 +107,15 @@ export default function PriceCalculator({
           </>
         )}
         <div className="pt-2 border-t border-accent/20">
-          <p className="font-medium">Total Cost: ₦{totalPrice.toLocaleString()}</p>
+          <p>Subtotal: ₦{subtotal.toLocaleString()}</p>
+          {discountPercentage > 0 && (
+            <p className="text-green-600 font-medium">
+              Discount ({discountPercentage}%): -₦{discountAmount.toLocaleString()}
+            </p>
+          )}
+          <p className="font-medium text-lg">
+            Total Cost: ₦{totalPrice.toLocaleString()}
+          </p>
         </div>
       </div>
     </div>

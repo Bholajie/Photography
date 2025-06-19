@@ -21,7 +21,9 @@ export async function POST(request: Request) {
       address,
       additionalOptions, 
       additionalInfo,
-      numberOfOutfits
+      numberOfOutfits,
+      couponCode,
+      discountPercentage
     } = formData;
 
     // Calculate total price
@@ -69,7 +71,10 @@ export async function POST(request: Request) {
       : locationType === "home"
       ? getHomeServiceFee(location)
       : 0;
-    const totalPrice = basePrice + locationFee + additionalCost;
+    
+    const subtotal = basePrice + locationFee + additionalCost;
+    const discountAmount = discountPercentage ? (subtotal * discountPercentage) / 100 : 0;
+    const totalPrice = subtotal - discountAmount;
 
     // Format the date
     const formattedDate = date ? format(new Date(date), 'MMMM d, yyyy') : 'Not specified';
@@ -215,6 +220,11 @@ export async function POST(request: Request) {
                       `).join('')}
                     </div>
                   ` : ''}
+                  <p><span class="label">Subtotal:</span> ₦${subtotal.toLocaleString()}</p>
+                  ${discountPercentage ? `
+                    <p><span class="label" style="color: #059669;">Discount (${discountPercentage}%):</span> <span style="color: #059669; font-weight: bold;">-₦${discountAmount.toLocaleString()}</span></p>
+                    <p><span class="label" style="color: #059669;">Coupon Code:</span> <span style="color: #059669; font-weight: bold;">${couponCode}</span></p>
+                  ` : ''}
                   <p><span class="label highlight">Total Cost:</span> ₦${totalPrice.toLocaleString()}</p>
                 </div>
               </div>
@@ -277,6 +287,17 @@ export async function POST(request: Request) {
                 color: #666;
                 font-size: 0.9em;
               }
+              .discount {
+                background-color: #f0fdf4;
+                border: 1px solid #bbf7d0;
+                border-radius: 6px;
+                padding: 15px;
+                margin: 20px 0;
+              }
+              .discount h3 {
+                color: #059669;
+                margin-top: 0;
+              }
             </style>
           </head>
           <body>
@@ -286,6 +307,15 @@ export async function POST(request: Request) {
             
             <div class="content">
               <p>Dear ${name},</p>
+              
+              ${discountPercentage ? `
+                <div class="discount">
+                  <h3>🎉 Discount Applied!</h3>
+                  <p>Great news! Your coupon code <strong>${couponCode}</strong> has been applied successfully.</p>
+                  <p>You've saved <strong>₦${discountAmount.toLocaleString()}</strong> (${discountPercentage}% off) on your booking!</p>
+                  <p><strong>Final Total: ₦${totalPrice.toLocaleString()}</strong></p>
+                </div>
+              ` : ''}
               
               ${isWedding ? 
                 `<p>Thank you for your interest in our wedding photography services! We're excited to help document your special day.</p>

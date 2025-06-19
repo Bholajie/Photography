@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils"
 import { PackageType } from "@/lib/types"
 import { Checkbox } from "@/components/ui/checkbox"
 import PriceCalculator from "./price-calculator"
+import CouponSection from "./coupon-section"
 
 const bookingFormSchema = z.object({
   packageId: z.string({
@@ -46,6 +47,8 @@ const bookingFormSchema = z.object({
   numberOfOutfits: z.number().min(1, {
     message: "Please select a valid number of outfits",
   }),
+  couponCode: z.string().optional(),
+  discountPercentage: z.number().optional(),
 })
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>
@@ -60,6 +63,7 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(null)
   const [selectedLocationType, setSelectedLocationType] = useState<string>("")
   const [numberOfOutfits, setNumberOfOutfits] = useState<number>(1)
+  const [discountPercentage, setDiscountPercentage] = useState<number>(0)
   
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
@@ -143,12 +147,18 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
   const onSubmit = async (data: BookingFormValues) => {
     setIsSubmitting(true);
     try {
+      const formDataWithCoupon = {
+        ...data,
+        couponCode: discountPercentage > 0 ? 'SHEYLORPHOTOGRAPHY' : undefined,
+        discountPercentage: discountPercentage > 0 ? discountPercentage : undefined,
+      };
+
       const response = await fetch('/api/booking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(formDataWithCoupon),
       });
 
       const result = await response.json();
@@ -159,6 +169,7 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
         });
         form.reset();
         setSelectedPackage(null);
+        setDiscountPercentage(0);
       } else {
         throw new Error("Failed to send booking request");
       }
@@ -171,6 +182,14 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
     }
   };
   
+  const handleCouponApplied = (discount: number) => {
+    setDiscountPercentage(discount);
+  };
+
+  const handleCouponRemoved = () => {
+    setDiscountPercentage(0);
+  };
+
   return (
     <div id="booking-form" className="bg-card rounded-lg shadow-sm border p-6">
       <h2 className="text-2xl font-display mb-6">Book Your Session</h2>
@@ -454,6 +473,13 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
                 locationType={selectedLocationType}
                 location={form.watch("location") || ""}
                 additionalOptions={form.watch("additionalOptions") || []}
+                discountPercentage={discountPercentage}
+              />
+
+              <CouponSection
+                onCouponApplied={handleCouponApplied}
+                onCouponRemoved={handleCouponRemoved}
+                isApplied={discountPercentage > 0}
               />
             </>
           )}
