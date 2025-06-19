@@ -149,7 +149,7 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
     try {
       const formDataWithCoupon = {
         ...data,
-        couponCode: discountPercentage > 0 ? 'SHEYLORPHOTOGRAPHY' : undefined,
+        couponCode: discountPercentage > 0 ? 'Sheyilor15' : undefined,
         discountPercentage: discountPercentage > 0 ? discountPercentage : undefined,
       };
 

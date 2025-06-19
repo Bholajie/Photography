@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
-const heroImages = [
+const desktopHeroImages = [
   "/images/HeroSection/2.jpg",
   "/images/HeroSection/3.jpg",
   "/images/HeroSection/4.jpg",
@@ -15,18 +15,66 @@ const heroImages = [
   "/images/HeroSection/Untitled-2.jpg",
 ]
 
+const mobileHeroImages = [
+  "/images/hero/SHEY9790.jpg",
+  "/images/hero/SHEY9212_(2)1.jpg",
+  "/images/hero/SHEY9463.jpg",
+  "/images/hero/SHEY7690.jpg",
+  "/images/hero/SHEY8892.jpg",
+  "/images/hero/SHEY7098.jpg",
+  "/images/hero/SHEY7165.jpg",
+  "/images/hero/SHEY7452.jpg",
+  "/images/hero/SHEY6090.jpg",
+  "/images/hero/SHEY6382.jpg",
+  "/images/hero/SHEY4400.jpg",
+  "/images/hero/SHEY6044.jpg",
+  "/images/hero/SHEY1717.jpg",
+  "/images/hero/SHEY3329.jpg",
+  "/images/hero/SHEY0859.jpg",
+  "/images/hero/SHEY1262.jpg",
+  "/images/hero/SHEY1418.jpg",
+  "/images/hero/SHEY0578.jpg",
+  "/images/hero/SHEY0408.jpg",
+  "/images/hero/IMG_0336.JPEG",
+  "/images/hero/SHEY0039.jpg",
+  "/images/hero/IMG_0094.JPEG",
+]
+
 export default function Hero() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    // Check if we're on the client side
+    if (typeof window !== 'undefined') {
+      const checkScreenSize = () => {
+        setIsMobile(window.innerWidth < 768) // 768px is the md breakpoint
+      }
+
+      // Initial check
+      checkScreenSize()
+
+      // Add event listener for window resize
+      window.addEventListener('resize', checkScreenSize)
+
+      // Cleanup
+      return () => window.removeEventListener('resize', checkScreenSize)
+    }
+  }, [])
 
   useEffect(() => {
     const timer = setInterval(() => {
+      const currentImages = isMobile ? mobileHeroImages : desktopHeroImages
       setCurrentImageIndex((prevIndex) => 
-        prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
+        prevIndex === currentImages.length - 1 ? 0 : prevIndex + 1
       )
     }, 5000)
 
     return () => clearInterval(timer)
-  }, [])
+  }, [isMobile])
+
+  // Get the appropriate image set based on screen size
+  const heroImages = isMobile ? mobileHeroImages : desktopHeroImages
 
   return (
     <div className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
