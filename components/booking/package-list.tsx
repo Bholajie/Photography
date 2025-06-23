@@ -22,7 +22,8 @@ export default function PackageList({ packages, onSelectPackage }: PackageListPr
     pkg.id === "portrait" || 
     pkg.id === "family-portrait" || 
     pkg.id === "fashion-collection" ||
-    pkg.id === "convocation"
+    pkg.id === "convocation" ||
+    pkg.id === "call-to-bar"
   )
 
   const eventPackages = packages.filter(pkg => 

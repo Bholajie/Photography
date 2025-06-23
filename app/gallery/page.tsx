@@ -5,7 +5,7 @@ import { getGalleryCategories } from '@/lib/gallery';
 
 export const metadata: Metadata = {
   title: 'Gallery | Sheyilor Photography',
-  description: 'Explore our portfolio of Fashion, Celebrity Portraits, Convocation, Birthday, Family, and Maternity Photography',
+  description: 'Explore our portfolio of Fashion, Celebrity Portraits, Convocation, Birthday, Family, Maternity, and Call to Bar Photography',
 };
 
 export default async function GalleryPage() {

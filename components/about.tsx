@@ -54,7 +54,7 @@ export default function About() {
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               Our passion lies in creating authentic, emotion-filled imagery that tells your story. 
-              From fashion collections to celebrity portraits, convocation ceremonies to family moments, 
+              From fashion collections to celebrity portraits, convocation ceremonies to family moments, and Call to Bar celebrations, 
               we're dedicated to preserving those fleeting moments that matter most.
             </motion.p>
             

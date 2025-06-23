@@ -66,6 +66,12 @@ const featuredCategories = [
     name: "Events Candids",
     image: "/images/EventsCandids/SHEY2656.jpg",
     description: "Candid event photography capturing genuine moments and emotions."
+  },
+  {
+    id: "call-to-bar",
+    name: "Call to Bar",
+    image: "/images/CallToBar/SHEY0295.jpg",
+    description: "Special collection from the Call to Bar event."
   }
 ]
 

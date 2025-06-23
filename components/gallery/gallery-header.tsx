@@ -19,7 +19,8 @@ export default function GalleryHeader() {
           { label: "Maternity", slug: "maternity" },
           { label: "Wedding Portraits", slug: "wedding-portraits" },
           { label: "Pre Wedding Portraits", slug: "pre-wedding-portraits" },
-          { label: "Events Candids", slug: "events-candids" }
+          { label: "Events Candids", slug: "events-candids" },
+          { label: "Call to Bar", slug: "call-to-bar" }
         ].map((category) => (
           <Link
             key={category.slug}

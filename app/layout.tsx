@@ -18,7 +18,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: 'Sheyilor Photography',
-  description: 'Professional photography services for portraits, weddings, and lifestyle shoots',
+  description: 'Professional photography services for portraits, weddings, lifestyle shoots, and Call to Bar celebrations',
   icons: {
     icon: '/icon.png',
     shortcut: '/icon.png',

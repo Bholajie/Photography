@@ -220,6 +220,7 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
                     <SelectItem value="family-portrait">Family/Group Portrait</SelectItem>
                     <SelectItem value="fashion-collection">Fashion Collection Shoot</SelectItem>
                     <SelectItem value="convocation">Convocation Session</SelectItem>
+                    <SelectItem value="call-to-bar">Call to Bar Session</SelectItem>
                     <SelectItem value="event-quarter">Quarter Day Event</SelectItem>
                     <SelectItem value="event-half">Half Day Event</SelectItem>
                     <SelectItem value="event-full">Full Day Event</SelectItem>

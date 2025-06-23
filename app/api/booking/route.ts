@@ -102,6 +102,7 @@ export async function POST(request: Request) {
       "family-portrait": "Family/Group Portrait",
       "fashion-collection": "Fashion Collection Shoot",
       convocation: "Convocation Session",
+      "call-to-bar": "Call to Bar Session",
       "event-quarter": "Quarter Day Event",
       "event-half": "Half Day Event",
       "event-full": "Full Day Event",
