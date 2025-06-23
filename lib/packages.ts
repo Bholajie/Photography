@@ -250,6 +250,24 @@ export async function getPackages(): Promise<PackageType[]> {
         "Logistics fee applies based on location"
       ],
       image: "/images/Convocation/SHEY6382.jpg"
+    },
+    {
+      id: "call-to-bar",
+      name: "Call to Bar Session",
+      price: 75000,
+      priceSuffix: " per outfit",
+      duration: "2 Working days",
+      shortDescription: "Professional Call to Bar photography at SHEYILOR STUDIO",
+      features: [
+        "Location: SHEYILOR STUDIO",
+        "4 images per outfit",
+        "Professional editing",
+        "2 working days delivery",
+        "Online gallery",
+        "Available between 9am - 5pm",
+        "Logistics fee applies based on location"
+      ],
+      image: "/images/CallToBar/SHEY0295.jpg"
     }
   ];
 }

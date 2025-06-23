@@ -132,7 +132,7 @@ export default function Hero() {
           className="mt-8"
         >
           <p className="text-lg md:text-xl max-w-3xl mx-auto mb-8 text-white/90">
-            Capturing moments through Fashion, Celebrity Portraits, Convocation, Birthday, Family, Maternity, Wedding, Pre Wedding, and Event Candids Photography
+            Capturing moments through Fashion, Celebrity Portraits, Convocation, Birthday, Family, Maternity, Wedding, Pre Wedding, Event Candids, and Call to Bar Photography
           </p>
         </motion.div>
         

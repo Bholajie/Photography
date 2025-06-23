@@ -69,6 +69,7 @@ export default function Footer() {
               <li><a href="/gallery/wedding-portraits" className="text-muted-foreground hover:text-accent">Wedding Portraits</a></li>
               <li><a href="/gallery/pre-wedding-portraits" className="text-muted-foreground hover:text-accent">Pre Wedding Portraits</a></li>
               <li><a href="/gallery/events-candids" className="text-muted-foreground hover:text-accent">Events Candids</a></li>
+              <li><a href="/gallery/call-to-bar" className="text-muted-foreground hover:text-accent">Call to Bar</a></li>
             </ul>
           </div>
           
