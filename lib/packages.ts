@@ -20,7 +20,7 @@ export async function getPackages(): Promise<PackageType[]> {
         "Available between 9am - 5pm",
         "Logistics fee applies based on location"
       ],
-      image: "/images/CelebrityPortraits/SHEY6090.jpg"
+      image: "/images/BirthdayPortrait/IMG_2152.jpg"
     },
     {
       id: "family-portrait",
@@ -38,7 +38,7 @@ export async function getPackages(): Promise<PackageType[]> {
         "Available between 9am - 5pm",
         "Logistics fee applies based on location"
       ],
-      image: "/images/FamilyPortrait/SHEY7165.jpg"
+      image: "/images/FamilyPortrait/SHEY0045.jpg"
     },
     {
       id: "fashion-collection",
@@ -57,7 +57,7 @@ export async function getPackages(): Promise<PackageType[]> {
         "Online gallery",
         "Logistics fee applies based on location"
       ],
-      image: "/images/FashionCollection/SHEY5991.jpg"
+      image: "/images/FashionCollection/SHEY0279.jpg"
     },
     // Event Photography Packages
     {
@@ -185,7 +185,7 @@ export async function getPackages(): Promise<PackageType[]> {
         "Field Experience (Practical Shoots)",
         "Perfect for building a photography business"
       ],
-      image: "/images/FashionCollection/SHEY1418.jpg"
+      image: "/images/BirthdayPortrait/SHEY0065.jpg"
     },
     {
       id: "training-intensive",
@@ -216,7 +216,7 @@ export async function getPackages(): Promise<PackageType[]> {
         "Professional Results",
         "Perfect for upgrading retouching skills"
       ],
-      image: "/images/FashionCollection/SHEY7480.jpg"
+      image: "/images/BirthdayPortrait/SHEY1326.jpg"
     },
     {
       id: "training-lighting",
@@ -231,7 +231,7 @@ export async function getPackages(): Promise<PackageType[]> {
         "Setup Breakdown",
         "Tailored for mastering lighting control"
       ],
-      image: "/images/FashionCollection/SHEY6044.jpg"
+      image: "/images/FashionCollection/SHEY0066.jpg"
     },
     {
       id: "convocation",
@@ -249,7 +249,7 @@ export async function getPackages(): Promise<PackageType[]> {
         "Available between 9am - 5pm",
         "Logistics fee applies based on location"
       ],
-      image: "/images/Convocation/SHEY6382.jpg"
+      image: "/images/Convocation/IMG_7425.jpg"
     },
     {
       id: "call-to-bar",

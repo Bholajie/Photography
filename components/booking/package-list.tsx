@@ -73,7 +73,7 @@ export default function PackageList({ packages, onSelectPackage }: PackageListPr
           <div className="bg-accent/5 p-6 rounded-lg">
             <div className="relative w-full h-[300px] mb-6 rounded-lg overflow-hidden">
               <Image
-                src="/images/WeddingPortraits/SHEY9212_(2)1.jpg"
+                src="/images/WeddingPortraits/SHEY1041.jpg"
                 alt="Wedding Photography"
                 fill
                 className="object-cover"

@@ -16,25 +16,25 @@ const featuredCategories = [
   {
     id: "birthday",
     name: "Birthday Portrait",
-    image: "/images/BirthdayPortrait/SHEY7690.jpg",
+    image: "/images/BirthdayPortrait/JV0A7333.jpg",
     description: "Special birthday portrait sessions celebrating milestones"
   },
   {
     id: "celebrity",
     name: "Celebrity Portraits",
-    image: "/images/CelebrityPortraits/SHEY6090.jpg",
+    image: "/images/CelebrityPortraits/IMAD667.jpg",
     description: "Exclusive celebrity portrait photography capturing star power"
   },
   {
     id: "wedding-portraits",
     name: "Wedding Portraits",
-    image: "/images/WeddingPortraits/SHEY3763.jpg",
+    image: "/images/WeddingPortraits/SHEY0482.jpg",
     description: "Timeless wedding portraits capturing the joy and love of your special day."
   },
   {
     id: "fashion",
     name: "Fashion Collection",
-    image: "/images/FashionCollection/SHEY5991.jpg",
+    image: "/images/FashionCollection/SHEY0093.jpg",
     description: "Professional fashion photography showcasing style and elegance"
   },
   {
@@ -46,13 +46,13 @@ const featuredCategories = [
   {
     id: "family",
     name: "Family Portrait",
-    image: "/images/FamilyPortrait/SHEY7165.jpg",
+    image: "/images/FamilyPortrait/SHEY6965.jpg",
     description: "Heartwarming family portraits capturing precious moments"
   },
   {
     id: "maternity",
     name: "Maternity",
-    image: "/images/Maternity/SHEY1801.jpg",
+    image: "/images/Maternity/SHEY1707.jpg",
     description: "Beautiful maternity photography celebrating motherhood"
   },
   {
