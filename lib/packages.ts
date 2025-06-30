@@ -20,7 +20,7 @@ export async function getPackages(): Promise<PackageType[]> {
         "Available between 9am - 5pm",
         "Logistics fee applies based on location"
       ],
-      image: "/images/BirthdayPortrait/IMG_2152.jpg"
+      image: "/images/BirthdayPortrait/SHEY0014.jpg"
     },
     {
       id: "family-portrait",

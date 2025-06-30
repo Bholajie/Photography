@@ -40,7 +40,7 @@ const featuredCategories = [
   {
     id: "convocation",
     name: "Convocation",
-    image: "/images/Convocation/SHEY6382.jpg",
+    image: "/images/Convocation/IMG_7425.jpg",
     description: "Memorable graduation photography capturing academic achievements"
   },
   {
