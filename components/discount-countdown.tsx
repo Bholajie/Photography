@@ -60,11 +60,35 @@ export default function DiscountCountdown() {
   const [isVisible, setIsVisible] = useState(false);
   const [hasExpired, setHasExpired] = useState(false);
 
-  const targetDate = new Date('2025-07-01T00:00:00').getTime();
+  // const targetDate = new Date('2025-07-01T00:00:00').getTime();
+
+  // const calculateTimeLeft = useCallback(() => {
+  //   const now = new Date().getTime();
+  //   const difference = targetDate - now;
+
+  //   if (difference > 0) {
+  //     setTimeLeft({
+  //       days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+  //       hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+  //       minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+  //       seconds: Math.floor((difference % (1000 * 60)) / 1000)
+  //     });
+  //     setHasExpired(false);
+  //   } else {
+  //     setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  //     setHasExpired(true);
+  //   }
+  // }, [targetDate]);
+
+  const getEndOfMonth = () => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).getTime(); // last day, 23:59:59
+  };
 
   const calculateTimeLeft = useCallback(() => {
     const now = new Date().getTime();
-    const difference = targetDate - now;
+    const endOfMonth = getEndOfMonth();
+    const difference = endOfMonth - now;
 
     if (difference > 0) {
       setTimeLeft({
@@ -78,7 +102,7 @@ export default function DiscountCountdown() {
       setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       setHasExpired(true);
     }
-  }, [targetDate]);
+  }, []);
 
   useEffect(() => {
     // Initial calculation
@@ -211,7 +235,7 @@ export default function DiscountCountdown() {
               className="flex items-center justify-center gap-2 text-white/80 mb-8"
             >
               <Calendar className="w-5 h-5" />
-              <span className="font-medium">Offer starts: July 1st, 2025</span>
+              <span className="font-medium">Offer ends: July 31st, 2025</span>
             </motion.div>
           </motion.div>
 
