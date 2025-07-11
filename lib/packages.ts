@@ -7,7 +7,7 @@ export async function getPackages(): Promise<PackageType[]> {
     {
       id: "portrait",
       name: "Portrait Session",
-      price: 85000,
+      price: 70000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
       shortDescription: "Professional portrait photography at SHEYILOR STUDIO (Available between 9am - 5pm)",
@@ -25,13 +25,13 @@ export async function getPackages(): Promise<PackageType[]> {
     {
       id: "family-portrait",
       name: "Family/Group Portrait",
-      price: 105000,
+      price: 100000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
       shortDescription: "Perfect for family and group portraits at SHEYILOR STUDIO (Available between 9am - 5pm)",
       features: [
         "Location: SHEYILOR STUDIO",
-        "5 images total per outfit",
+        "4 images per outfit",
         "Professional editing",
         "2 working days delivery",
         "Online gallery",
@@ -242,7 +242,7 @@ export async function getPackages(): Promise<PackageType[]> {
       shortDescription: "Professional convocation photography at SHEYILOR STUDIO",
       features: [
         "Location: SHEYILOR STUDIO",
-        "4 images per outfit",
+        "3 images per outfit",
         "Professional editing",
         "2 working days delivery",
         "Online gallery",
@@ -254,13 +254,13 @@ export async function getPackages(): Promise<PackageType[]> {
     {
       id: "call-to-bar",
       name: "Call to Bar Session",
-      price: 75000,
+      price: 50000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
       shortDescription: "Professional Call to Bar photography at SHEYILOR STUDIO",
       features: [
         "Location: SHEYILOR STUDIO",
-        "4 images per outfit",
+        "3 images per outfit",
         "Professional editing",
         "2 working days delivery",
         "Online gallery",

@@ -121,6 +121,15 @@ export async function POST(request: Request) {
       ? `New Wedding Photography Consultation Request from ${name}`
       : `New Booking Request from ${name}`;
 
+    // Find images per outfit feature for relevant packages
+    let imagesPerOutfit: string | null = null;
+    if (["portrait", "family-portrait", "fashion-collection", "convocation", "call-to-bar"].includes(packageId)) {
+      if (selectedPackage && Array.isArray(selectedPackage.features)) {
+        const found = selectedPackage.features.find(f => typeof f === 'string' && f.toLowerCase().includes("images per outfit"));
+        if (typeof found === 'string') imagesPerOutfit = found;
+      }
+    }
+
     const { data, error } = await resend.emails.send({
       from: 'Sheyilor Photography <onboarding@resend.dev>',
       to: 'sheyilorphotography@gmail.com',
@@ -204,6 +213,7 @@ export async function POST(request: Request) {
                   <p><span class="label">Date:</span> ${formattedDate}</p>
                   <p><span class="label">Time:</span> ${formattedTime}</p>
                   ${numberOfOutfits ? `<p><span class="label">Number of Outfits:</span> ${numberOfOutfits}</p>` : ''}
+                  ${imagesPerOutfit ? `<p><span class="label">Images per Outfit:</span> ${imagesPerOutfit.replace(/.*?(\d+).*/, '$1')}</p>` : ''}
                   <p><span class="label">Location Type:</span> ${locationTypeLabels[locationType as keyof typeof locationTypeLabels] || locationType}</p>
                   ${location ? `<p><span class="label">Location:</span> ${locationLabels[location as keyof typeof locationLabels] || location}</p>` : ''}
                   ${address ? `<p><span class="label">Address:</span> ${address}</p>` : ''}
@@ -331,9 +341,9 @@ export async function POST(request: Request) {
                 </ul>` :
                 `<p>Thank you for choosing Sheyilor Photography! We've received your booking request for ${packageLabels[packageId as keyof typeof packageLabels] || packageId}.</p>
                 <p>Your session is scheduled for ${formattedDate} at ${formattedTime}.</p>
+                ${imagesPerOutfit ? `<p>Each outfit includes <strong>${imagesPerOutfit.replace(/.*?(\d+).*/, '$1')}</strong> professionally edited images.</p>` : ''}
                 <p>We'll review your request and get back to you within 24 hours to confirm your booking and discuss the next steps.</p>`
               }
-              
               <div class="footer">
                 <p>Best regards,</p>
                 <p>The Sheyilor Photography Team</p>
@@ -355,4 +365,4 @@ export async function POST(request: Request) {
     console.error('Error sending email:', error);
     return NextResponse.json({ success: false, error: 'Failed to send email' }, { status: 500 });
   }
-} 
+}
