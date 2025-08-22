@@ -116,6 +116,8 @@ export async function POST(request: Request) {
       "training-lighting": "2-Day Lighting Masterclass"
     };
 
+    const isTraining = packageId.startsWith("training");
+
     const isWedding = packageId === "wedding";
     const subject = isWedding 
       ? `New Wedding Photography Consultation Request from ${name}`
@@ -208,13 +210,12 @@ export async function POST(request: Request) {
               <div class="section">
                 <h2 style="margin-top: 0; color: #1a1a1a;">${isWedding ? 'Wedding Consultation Details' : 'Booking Details'}</h2>
                 <div class="section">
-                  <h3>Booking Details</h3>
-                  <p><span class="label">Package:</span> ${packageLabels[packageId as keyof typeof packageLabels] || packageId}</p>
+                 <p><span class="label">Package:</span> ${packageLabels[packageId as keyof typeof packageLabels] || packageId}</p>
                   <p><span class="label">Date:</span> ${formattedDate}</p>
                   <p><span class="label">Time:</span> ${formattedTime}</p>
-                  ${numberOfOutfits ? `<p><span class="label">Number of Outfits:</span> ${numberOfOutfits}</p>` : ''}
-                  ${imagesPerOutfit ? `<p><span class="label">Images per Outfit:</span> ${imagesPerOutfit.replace(/.*?(\d+).*/, '$1')}</p>` : ''}
-                  <p><span class="label">Location Type:</span> ${locationTypeLabels[locationType as keyof typeof locationTypeLabels] || locationType}</p>
+                  ${!isTraining && numberOfOutfits ? `<p><span class="label">Number of Outfits:</span> ${numberOfOutfits}</p>` : ''}
+                  ${!isTraining && imagesPerOutfit ? `<p><span class="label">Images per Outfit:</span> ${imagesPerOutfit.replace(/.*?(\d+).*/, '$1')}</p>` : ''}
+                  ${!isTraining ? `<p><span class="label">Location Type:</span> ${locationTypeLabels[locationType as keyof typeof locationTypeLabels] || locationType}</p>` : ''}
                   ${location ? `<p><span class="label">Location:</span> ${locationLabels[location as keyof typeof locationLabels] || location}</p>` : ''}
                   ${address ? `<p><span class="label">Address:</span> ${address}</p>` : ''}
                 </div>

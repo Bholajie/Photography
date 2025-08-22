@@ -269,7 +269,7 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
 
           {selectedPackage && (
             <>
-              {(selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection") && (
+              {(selectedPackage.id === "portrait" || selectedPackage.id === "call-to-bar" || selectedPackage.id === "convocation" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection") && (
                 <>
                   <FormField
                     control={form.control}
@@ -387,7 +387,7 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
                 </>
               )}
 
-              {(selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection") && (
+              {(selectedPackage.id === "portrait" || selectedPackage.id === "call-to-bar" || selectedPackage.id === "convocation" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection") && (
                 <FormField
                   control={form.control}
                   name="numberOfOutfits"
