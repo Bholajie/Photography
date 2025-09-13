@@ -18,7 +18,6 @@ import { cn } from "@/lib/utils"
 import { PackageType } from "@/lib/types"
 import { Checkbox } from "@/components/ui/checkbox"
 import PriceCalculator from "./price-calculator"
-import CouponSection from "./coupon-section"
 
 const bookingFormSchema = z.object({
   packageId: z.string({
@@ -47,8 +46,6 @@ const bookingFormSchema = z.object({
   numberOfOutfits: z.number().min(1, {
     message: "Please select a valid number of outfits",
   }),
-  couponCode: z.string().optional(),
-  discountPercentage: z.number().optional(),
 })
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>
@@ -63,7 +60,6 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(null)
   const [selectedLocationType, setSelectedLocationType] = useState<string>("")
   const [numberOfOutfits, setNumberOfOutfits] = useState<number>(1)
-  const [discountPercentage, setDiscountPercentage] = useState<number>(0)
   
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
@@ -147,18 +143,12 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
   const onSubmit = async (data: BookingFormValues) => {
     setIsSubmitting(true);
     try {
-      const formDataWithCoupon = {
-        ...data,
-        couponCode: discountPercentage > 0 ? 'Sheyilor15' : undefined,
-        discountPercentage: discountPercentage > 0 ? discountPercentage : undefined,
-      };
-
       const response = await fetch('/api/booking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formDataWithCoupon),
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
@@ -169,7 +159,6 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
         });
         form.reset();
         setSelectedPackage(null);
-        setDiscountPercentage(0);
       } else {
         throw new Error("Failed to send booking request");
       }
@@ -180,14 +169,6 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
     } finally {
       setIsSubmitting(false);
     }
-  };
-  
-  const handleCouponApplied = (discount: number) => {
-    setDiscountPercentage(discount);
-  };
-
-  const handleCouponRemoved = () => {
-    setDiscountPercentage(0);
   };
 
   return (
@@ -416,71 +397,97 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
               )}
 
               {selectedPackage.id.startsWith("event-") && (
-                <FormField
-                  control={form.control}
-                  name="additionalOptions"
-                  render={() => (
-                    <FormItem>
-                      <div className="mb-4">
-                        <FormLabel>Additional Options</FormLabel>
+                <>
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Event Location</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select event location" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {outdoorLocations.map((option) => (
+                              <SelectItem key={option.id} value={option.id}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormDescription>
-                          Select any additional services you'd like to add to your package
+                          Select the area where your event will take place for logistics fee calculation
                         </FormDescription>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {additionalOptions.map((option) => (
-                          <FormField
-                            key={option.id}
-                            control={form.control}
-                            name="additionalOptions"
-                            render={({ field }) => {
-                              return (
-                                <FormItem
-                                  key={option.id}
-                                  className="flex flex-row items-start space-x-3 space-y-0"
-                                >
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(option.id)}
-                                      onCheckedChange={(checked) => {
-                                        return checked
-                                          ? field.onChange([...field.value || [], option.id])
-                                          : field.onChange(
-                                              field.value?.filter(
-                                                (value) => value !== option.id
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="additionalOptions"
+                    render={() => (
+                      <FormItem>
+                        <div className="mb-4">
+                          <FormLabel>Additional Options</FormLabel>
+                          <FormDescription>
+                            Select any additional services you'd like to add to your package
+                          </FormDescription>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {additionalOptions.map((option) => (
+                            <FormField
+                              key={option.id}
+                              control={form.control}
+                              name="additionalOptions"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem
+                                    key={option.id}
+                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(option.id)}
+                                        onCheckedChange={(checked) => {
+                                          return checked
+                                            ? field.onChange([...field.value || [], option.id])
+                                            : field.onChange(
+                                                field.value?.filter(
+                                                  (value) => value !== option.id
+                                                )
                                               )
-                                            )
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal">
-                                    {option.label}
-                                  </FormLabel>
-                                </FormItem>
-                              )
-                            }}
-                          />
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      {option.label}
+                                    </FormLabel>
+                                  </FormItem>
+                                )
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
               )}
 
               <PriceCalculator
                 selectedPackage={selectedPackage}
-                numberOfOutfits={selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection" ? numberOfOutfits : 1}
+                numberOfOutfits={selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection" || selectedPackage.id === "call-to-bar" || selectedPackage.id === "convocation" ? numberOfOutfits : 1}
                 locationType={selectedLocationType}
                 location={form.watch("location") || ""}
                 additionalOptions={form.watch("additionalOptions") || []}
-                discountPercentage={discountPercentage}
-              />
-
-              <CouponSection
-                onCouponApplied={handleCouponApplied}
-                onCouponRemoved={handleCouponRemoved}
-                isApplied={discountPercentage > 0}
               />
             </>
           )}

@@ -21,14 +21,11 @@ export async function POST(request: Request) {
       address,
       additionalOptions, 
       additionalInfo,
-      numberOfOutfits,
-      couponCode,
-      discountPercentage
+      numberOfOutfits
     } = formData;
 
-    // Calculate total price
+    // Calculate total price (matching frontend PriceCalculator logic)
     const selectedPackage = packages.find(p => p.id === packageId);
-    const basePrice = selectedPackage ? selectedPackage.price * numberOfOutfits : 0;
     
     const getLogisticsFee = (location: string) => {
       switch (location) {
@@ -63,18 +60,36 @@ export async function POST(request: Request) {
       return options.map(option => getAdditionalOptionPrice(option))
     }
 
-    const additionalOptionsDetails = calculateAdditionalOptionsCost(additionalOptions || [])
-    const additionalCost = additionalOptionsDetails.reduce((sum, option) => sum + option.price, 0)
+    // Determine if package is outfit-based or event package
+    const isOutfitBasedPackage = selectedPackage && (
+      selectedPackage.id === "portrait" || 
+      selectedPackage.id === "family-portrait" || 
+      selectedPackage.id === "fashion-collection" ||
+      selectedPackage.id === "call-to-bar" ||
+      selectedPackage.id === "convocation"
+    );
 
-    const locationFee = locationType === "outdoor" 
+    const isEventPackage = selectedPackage && selectedPackage.id.startsWith("event-");
+
+    // Calculate base price
+    const basePrice = isOutfitBasedPackage 
+      ? (selectedPackage ? selectedPackage.price * numberOfOutfits : 0)
+      : (selectedPackage ? selectedPackage.price : 0);
+
+    // Calculate location fee
+    const locationFee = (isOutfitBasedPackage && locationType === "outdoor") 
       ? getLogisticsFee(location)
-      : locationType === "home"
+      : (isOutfitBasedPackage && locationType === "home")
       ? getHomeServiceFee(location)
+      : (isEventPackage && location)
+      ? getLogisticsFee(location)
       : 0;
+
+    // Calculate additional options cost (only for event packages)
+    const additionalOptionsDetails = isEventPackage ? calculateAdditionalOptionsCost(additionalOptions || []) : [];
+    const additionalCost = additionalOptionsDetails.reduce((sum, option) => sum + option.price, 0);
     
-    const subtotal = basePrice + locationFee + additionalCost;
-    const discountAmount = discountPercentage ? (subtotal * discountPercentage) / 100 : 0;
-    const totalPrice = subtotal - discountAmount;
+    const totalPrice = basePrice + locationFee + additionalCost;
 
     // Format the date
     const formattedDate = date ? format(new Date(date), 'MMMM d, yyyy') : 'Not specified';
@@ -222,8 +237,16 @@ export async function POST(request: Request) {
 
                 <div class="section">
                   <h3>Price Breakdown</h3>
-                  <p><span class="label">Base Price:</span> ₦${basePrice.toLocaleString()}</p>
-                  ${locationFee > 0 ? `<p><span class="label">${locationType === "outdoor" ? "Logistics Fee" : "Home Service Fee"}:</span> ₦${locationFee.toLocaleString()}</p>` : ''}
+                  ${isOutfitBasedPackage ? 
+                    `<p><span class="label">Base Price (${numberOfOutfits} ${numberOfOutfits === 1 ? 'outfit' : 'outfits'}):</span> ₦${basePrice.toLocaleString()}</p>` :
+                    `<p><span class="label">Base Price:</span> ₦${basePrice.toLocaleString()}</p>`
+                  }
+                  ${locationFee > 0 ? `
+                    <p><span class="label">${isOutfitBasedPackage 
+                      ? (locationType === "outdoor" ? "Logistics Fee" : "Home Service Fee")
+                      : "Logistics Fee"
+                    }:</span> ₦${locationFee.toLocaleString()}</p>
+                  ` : ''}
                   ${additionalOptionsDetails.length > 0 ? `
                     <p><span class="label">Additional Options:</span></p>
                     <div style="margin-left: 20px;">
@@ -231,11 +254,6 @@ export async function POST(request: Request) {
                         <p>${option.label}: ₦${option.price.toLocaleString()}</p>
                       `).join('')}
                     </div>
-                  ` : ''}
-                  <p><span class="label">Subtotal:</span> ₦${subtotal.toLocaleString()}</p>
-                  ${discountPercentage ? `
-                    <p><span class="label" style="color: #059669;">Discount (${discountPercentage}%):</span> <span style="color: #059669; font-weight: bold;">-₦${discountAmount.toLocaleString()}</span></p>
-                    <p><span class="label" style="color: #059669;">Coupon Code:</span> <span style="color: #059669; font-weight: bold;">${couponCode}</span></p>
                   ` : ''}
                   <p><span class="label highlight">Total Cost:</span> ₦${totalPrice.toLocaleString()}</p>
                 </div>
@@ -320,14 +338,6 @@ export async function POST(request: Request) {
             <div class="content">
               <p>Dear ${name},</p>
               
-              ${discountPercentage ? `
-                <div class="discount">
-                  <h3>🎉 Discount Applied!</h3>
-                  <p>Great news! Your coupon code <strong>${couponCode}</strong> has been applied successfully.</p>
-                  <p>You've saved <strong>₦${discountAmount.toLocaleString()}</strong> (${discountPercentage}% off) on your booking!</p>
-                  <p><strong>Final Total: ₦${totalPrice.toLocaleString()}</strong></p>
-                </div>
-              ` : ''}
               
               ${isWedding ? 
                 `<p>Thank you for your interest in our wedding photography services! We're excited to help document your special day.</p>

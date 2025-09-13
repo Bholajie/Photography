@@ -6,7 +6,6 @@ interface PriceCalculatorProps {
   locationType: string
   location: string
   additionalOptions: string[]
-  discountPercentage?: number
 }
 
 export default function PriceCalculator({
@@ -14,8 +13,7 @@ export default function PriceCalculator({
   numberOfOutfits,
   locationType,
   location,
-  additionalOptions,
-  discountPercentage = 0
+  additionalOptions
 }: PriceCalculatorProps) {
   if (!selectedPackage) return null
 
@@ -62,7 +60,9 @@ export default function PriceCalculator({
 
   const isOutfitBasedPackage = selectedPackage.id === "portrait" || 
     selectedPackage.id === "family-portrait" || 
-    selectedPackage.id === "fashion-collection"
+    selectedPackage.id === "fashion-collection" ||
+    selectedPackage.id === "call-to-bar" ||
+    selectedPackage.id === "convocation"
 
   const isEventPackage = selectedPackage.id.startsWith("event-")
 
@@ -70,17 +70,17 @@ export default function PriceCalculator({
     ? selectedPackage.price * numberOfOutfits 
     : selectedPackage.price
 
-  const locationFee = isOutfitBasedPackage && locationType === "outdoor" 
+  const locationFee = (isOutfitBasedPackage && locationType === "outdoor") 
     ? getLogisticsFee(location)
-    : isOutfitBasedPackage && locationType === "home"
+    : (isOutfitBasedPackage && locationType === "home")
     ? getHomeServiceFee(location)
+    : (isEventPackage && location)
+    ? getLogisticsFee(location)
     : 0
 
   const additionalOptionsDetails = isEventPackage ? calculateAdditionalOptionsCost(additionalOptions) : []
   const additionalCost = additionalOptionsDetails.reduce((sum, option) => sum + option.price, 0)
-  const subtotal = basePrice + locationFee + additionalCost
-  const discountAmount = (subtotal * discountPercentage) / 100
-  const totalPrice = subtotal - discountAmount
+  const totalPrice = basePrice + locationFee + additionalCost
 
   return (
     <div className="bg-accent/5 p-4 rounded-lg space-y-2">
@@ -91,8 +91,13 @@ export default function PriceCalculator({
         ) : (
           <p>Base Price: ₦{basePrice.toLocaleString()}</p>
         )}
-        {isOutfitBasedPackage && locationFee > 0 && (
-          <p>{locationType === "outdoor" ? "Logistics Fee" : "Home Service Fee"}: ₦{locationFee.toLocaleString()}</p>
+        {locationFee > 0 && (
+          <p>
+            {isOutfitBasedPackage 
+              ? (locationType === "outdoor" ? "Logistics Fee" : "Home Service Fee")
+              : "Logistics Fee"
+            }: ₦{locationFee.toLocaleString()}
+          </p>
         )}
         {isEventPackage && additionalOptionsDetails.length > 0 && (
           <>
@@ -107,12 +112,6 @@ export default function PriceCalculator({
           </>
         )}
         <div className="pt-2 border-t border-accent/20">
-          <p>Subtotal: ₦{subtotal.toLocaleString()}</p>
-          {discountPercentage > 0 && (
-            <p className="text-green-600 font-medium">
-              Discount ({discountPercentage}%): -₦{discountAmount.toLocaleString()}
-            </p>
-          )}
           <p className="font-medium text-lg">
             Total Cost: ₦{totalPrice.toLocaleString()}
           </p>
