@@ -93,7 +93,7 @@ export default function ContactForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="sheyilorphotography@gmail.com" {...field} />
+                    <Input placeholder="booksheyilorphotography@gmail.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

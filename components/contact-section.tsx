@@ -21,7 +21,7 @@ export default function ContactSection() {
     {
       icon: <Mail className="h-5 w-5" />,
       label: "Email",
-      value: "Sheyilorphotography@gmail.com"
+      value: "booksheyilorphotography@gmail.com"
     },
     {
       icon: <MapPin className="h-5 w-5" />,
@@ -59,7 +59,7 @@ export default function ContactSection() {
         >
           <h2 className="text-3xl md:text-4xl font-display mb-4">Get in Touch</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Have questions or ready to book? Reach out and let's create something beautiful together
+            Have questions or ready to book? Reach out and let&apos;s create something beautiful together
           </p>
         </motion.div>
         
@@ -105,7 +105,7 @@ export default function ContactSection() {
             <div>
               <h3 className="text-xl font-display mb-6">Send a Message</h3>
               <p className="text-muted-foreground mb-6">
-                Fill out the form below or email us directly. We'll get back to you within 24 hours.
+                Fill out the form below or email us directly. We&apos;ll get back to you within 24 hours.
               </p>
               <Button asChild size="lg" className="w-full">
                 <Link href="/contact">Contact Us</Link>

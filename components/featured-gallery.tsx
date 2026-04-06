@@ -28,7 +28,7 @@ const featuredCategories = [
   {
     id: "wedding-portraits",
     name: "Wedding Portraits",
-    image: "/images/WeddingPortraits/SHEY0482.jpg",
+    image: "/images/WeddingPortraits/IMG_0212.jpg",
     description: "Timeless wedding portraits capturing the joy and love of your special day."
   },
   {

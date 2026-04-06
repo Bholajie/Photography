@@ -44,7 +44,7 @@ export default function CategoryGrid({ images }: CategoryGridProps) {
     <>
       <motion.div 
         ref={gridRef}
-        className="masonry-grid"
+        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ duration: 0.6 }}
@@ -52,7 +52,7 @@ export default function CategoryGrid({ images }: CategoryGridProps) {
         {images.map((image, index) => (
           <motion.div
             key={image.id}
-            className="masonry-item cursor-pointer rounded-md overflow-hidden"
+            className="cursor-pointer rounded-md overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: Math.min(0.5, index * 0.05) }}
