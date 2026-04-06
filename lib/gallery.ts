@@ -22,14 +22,14 @@ export async function getGalleryCategories(): Promise<GalleryCategoryType[]> {
       slug: "convocation",
       name: "Convocation",
       description: "Memorable graduation photography capturing academic achievements.",
-      coverImage: "/images/Convocation/SHEY0400.jpg"
+      coverImage: "/images/Convocation/SHEY7217.jpg"
     },
     {
       id: "birthday",
       slug: "birthday",
       name: "Birthday Portrait",
       description: "Special birthday portrait sessions celebrating milestones.",
-      coverImage: "/images/BirthdayPortrait/SHEY4049.jpg"
+      coverImage: "/images/BirthdayPortrait/JV0A7333.jpg"
     },
     {
       id: "family",
@@ -74,6 +74,39 @@ export async function getGalleryCategories(): Promise<GalleryCategoryType[]> {
       coverImage: "/images/CallToBar/SHEY0295.jpg"
     }
   ];
+}
+
+async function listLocalGalleryImages(folder: string, idPrefix: string): Promise<GalleryType["images"]> {
+  const { readdir, stat } = await import("node:fs/promises");
+  const path = await import("node:path");
+
+  const dir = path.join(process.cwd(), "public", "images", folder);
+  const entries = await readdir(dir, { withFileTypes: true });
+
+  const files = entries
+    .filter((e) => e.isFile())
+    .map((e) => e.name)
+    .filter((name) => /\.(jpe?g|png|webp|gif)$/i.test(name))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+
+  const filesWithTime = await Promise.all(
+    files.map(async (filename) => {
+      const fullPath = path.join(dir, filename);
+      const s = await stat(fullPath);
+      const t = typeof s.mtimeMs === "number" ? s.mtimeMs : s.mtime.getTime();
+      return { filename, t };
+    })
+  );
+
+  // Newest first (fallback to filename for stability)
+  filesWithTime.sort((a, b) => b.t - a.t || a.filename.localeCompare(b.filename, undefined, { numeric: true, sensitivity: "base" }));
+
+  return filesWithTime.map(({ filename }, idx) => ({
+    id: `${idPrefix}-${idx + 1}`,
+    url: `/images/${folder}/${filename}`,
+    alt: filename.replace(/\.[^.]+$/, ""),
+    aspectRatio: "portrait"
+  }));
 }
 
 // This would be replaced with MongoDB data in a real implementation
@@ -368,125 +401,14 @@ export async function getGalleryByCategory(slug: string): Promise<GalleryType | 
       slug: "convocation",
       name: "Convocation",
       description: "Memorable graduation photography capturing academic achievements.",
-      images: [
-        { id: "convocation-1", url: "/images/Convocation/SHEY0400.jpg", alt: "SHEY0400", aspectRatio: "portrait" },
-        { id: "convocation-2", url: "/images/Convocation/SHEY0419.jpg", alt: "SHEY0419", aspectRatio: "portrait" },
-        { id: "convocation-3", url: "/images/Convocation/SHEY3329.jpg", alt: "SHEY3329", aspectRatio: "portrait" },
-        { id: "convocation-4", url: "/images/Convocation/SHEY3488.jpg", alt: "SHEY3488", aspectRatio: "portrait" },
-        { id: "convocation-5", url: "/images/Convocation/SHEY3505.jpg", alt: "SHEY3505", aspectRatio: "portrait" },
-        { id: "convocation-6", url: "/images/Convocation/SHEY3528.jpg", alt: "SHEY3528", aspectRatio: "portrait" },
-        { id: "convocation-7", url: "/images/Convocation/IMG_7425.jpg", alt: "IMG_7425", aspectRatio: "portrait" },
-        { id: "convocation-8", url: "/images/Convocation/IMG_7561.jpg", alt: "IMG_7561", aspectRatio: "portrait" },
-        { id: "convocation-9", url: "/images/Convocation/IMG_7571.jpg", alt: "IMG_7571", aspectRatio: "portrait" },
-        { id: "convocation-10", url: "/images/Convocation/IMG_7501.jpg", alt: "IMG_7501", aspectRatio: "portrait" },
-        { id: "convocation-11", url: "/images/Convocation/IMG_7521.jpg", alt: "IMG_7521", aspectRatio: "portrait" },
-        { id: "convocation-12", url: "/images/Convocation/IMG_7530.jpg", alt: "IMG_7530", aspectRatio: "portrait" },
-        { id: "convocation-13", url: "/images/Convocation/IMG_7605.jpg", alt: "IMG_7605", aspectRatio: "portrait" },
-        { id: "convocation-14", url: "/images/Convocation/IMG_7621.jpg", alt: "IMG_7621", aspectRatio: "portrait" },
-        { id: "convocation-15", url: "/images/Convocation/SHEY9706.jpg", alt: "SHEY9706", aspectRatio: "portrait" },
-        { id: "convocation-16", url: "/images/Convocation/SHEY2303.jpg", alt: "SHEY2303", aspectRatio: "portrait" },
-        { id: "convocation-17", url: "/images/Convocation/SHEY2352.jpg", alt: "SHEY2352", aspectRatio: "portrait" },
-        { id: "convocation-18", url: "/images/Convocation/SHEY2421.jpg", alt: "SHEY2421", aspectRatio: "portrait" },
-        { id: "convocation-19", url: "/images/Convocation/SHEY6437.jpg", alt: "SHEY6437", aspectRatio: "portrait" },
-        { id: "convocation-20", url: "/images/Convocation/SHEY6494.jpg", alt: "SHEY6494", aspectRatio: "portrait" },
-        { id: "convocation-21", url: "/images/Convocation/SHEY6682.jpg", alt: "SHEY6682", aspectRatio: "portrait" },
-        { id: "convocation-22", url: "/images/Convocation/SHEY6743.jpg", alt: "SHEY6743", aspectRatio: "portrait" },
-        { id: "convocation-23", url: "/images/Convocation/SHEY6789.jpg", alt: "SHEY6789", aspectRatio: "portrait" },
-        { id: "convocation-24", url: "/images/Convocation/SHEY6818.jpg", alt: "SHEY6818", aspectRatio: "portrait" },
-        { id: "convocation-25", url: "/images/Convocation/SHEY6856.jpg", alt: "SHEY6856", aspectRatio: "portrait" },
-        { id: "convocation-26", url: "/images/Convocation/SHEY6468.jpg", alt: "SHEY6468", aspectRatio: "portrait" },
-        { id: "convocation-27", url: "/images/Convocation/SHEY6497.jpg", alt: "SHEY6497", aspectRatio: "portrait" },
-        { id: "convocation-28", url: "/images/Convocation/SHEY6584.jpg", alt: "SHEY6584", aspectRatio: "portrait" },
-        { id: "convocation-29", url: "/images/Convocation/SHEY6698.jpg", alt: "SHEY6698", aspectRatio: "portrait" },
-        { id: "convocation-30", url: "/images/Convocation/SHEY6763.jpg", alt: "SHEY6763", aspectRatio: "portrait" },
-        { id: "convocation-31", url: "/images/Convocation/SHEY6892 1.jpg", alt: "SHEY6892 1", aspectRatio: "portrait" },
-        { id: "convocation-32", url: "/images/Convocation/SHEY2965 NORMAL.jpg", alt: "SHEY2965 NORMAL", aspectRatio: "portrait" },
-        { id: "convocation-33", url: "/images/Convocation/SHEY2969 NORMAL.jpg", alt: "SHEY2969 NORMAL", aspectRatio: "portrait" },
-        { id: "convocation-34", url: "/images/Convocation/SHEY3000 NORMAL.jpg", alt: "SHEY3000 NORMAL", aspectRatio: "portrait" },
-        { id: "convocation-35", url: "/images/Convocation/SHEY0049 NORMAL.jpg", alt: "SHEY0049 NORMAL", aspectRatio: "portrait" },
-        { id: "convocation-36", url: "/images/Convocation/SHEY0057 NORMAL.jpg", alt: "SHEY0057 NORMAL", aspectRatio: "portrait" },
-        { id: "convocation-37", url: "/images/Convocation/SHEY0136 NORMAL.jpg", alt: "SHEY0136 NORMAL", aspectRatio: "portrait" },
-        { id: "convocation-38", url: "/images/Convocation/SHEY0174 NORMAL.jpg", alt: "SHEY0174 NORMAL", aspectRatio: "portrait" },
-        { id: "convocation-39", url: "/images/Convocation/SHEY0226 NORMAL.jpg", alt: "SHEY0226 NORMAL", aspectRatio: "portrait" },
-        { id: "convocation-40", url: "/images/Convocation/SHEY0285 NORMAL.jpg", alt: "SHEY0285 NORMAL", aspectRatio: "portrait" },
-        { id: "convocation-41", url: "/images/Convocation/SHEY0308 NORMAL.jpg", alt: "SHEY0308 NORMAL", aspectRatio: "portrait" }
-      ]
+      images: []
     },
     birthday: {
       id: "birthday",
       slug: "birthday",
       name: "Birthday Portrait",
       description: "Special birthday portrait sessions celebrating milestones.",
-      images: [
-        { id: "birthday-1", url: "/images/BirthdayPortrait/SHEY4049.jpg", alt: "SHEY4049", aspectRatio: "portrait" },
-        { id: "birthday-2", url: "/images/BirthdayPortrait/SHEY4283.jpg", alt: "SHEY4283", aspectRatio: "portrait" },
-        { id: "birthday-3", url: "/images/BirthdayPortrait/JV0A7333.jpg", alt: "JV0A7333", aspectRatio: "portrait" },
-        { id: "birthday-4", url: "/images/BirthdayPortrait/JV0A74932.jpg", alt: "JV0A74932", aspectRatio: "portrait" },
-        { id: "birthday-5", url: "/images/BirthdayPortrait/Untitled-1.jpg", alt: "Untitled-1", aspectRatio: "portrait" },
-        { id: "birthday-6", url: "/images/BirthdayPortrait/SHEY6593.jpg", alt: "SHEY6593", aspectRatio: "portrait" },
-        { id: "birthday-7", url: "/images/BirthdayPortrait/SHEY6750.jpg", alt: "SHEY6750", aspectRatio: "portrait" },
-        { id: "birthday-8", url: "/images/BirthdayPortrait/SHEY6865.jpg", alt: "SHEY6865", aspectRatio: "portrait" },
-        { id: "birthday-9", url: "/images/BirthdayPortrait/SHEY1271.jpg", alt: "SHEY1271", aspectRatio: "portrait" },
-        { id: "birthday-10", url: "/images/BirthdayPortrait/SHEY1326.jpg", alt: "SHEY1326", aspectRatio: "portrait" },
-        { id: "birthday-11", url: "/images/BirthdayPortrait/SHEY1470.jpg", alt: "SHEY1470", aspectRatio: "portrait" },
-        { id: "birthday-12", url: "/images/BirthdayPortrait/SHEY2109 NORMAL.jpg", alt: "SHEY2109 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-13", url: "/images/BirthdayPortrait/SHEY2129 NORMAL.jpg", alt: "SHEY2129 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-14", url: "/images/BirthdayPortrait/SHEY2222 NORMAL.jpg", alt: "SHEY2222 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-15", url: "/images/BirthdayPortrait/SHEY6317 NORMAL.jpg", alt: "SHEY6317 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-16", url: "/images/BirthdayPortrait/SHEY6496 NORMAL.jpg", alt: "SHEY6496 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-17", url: "/images/BirthdayPortrait/SHEY6684 NORMAL.jpg", alt: "SHEY6684 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-18", url: "/images/BirthdayPortrait/SHEY6756 NORMAL 1.jpg", alt: "SHEY6756 NORMAL 1", aspectRatio: "portrait" },
-        { id: "birthday-19", url: "/images/BirthdayPortrait/SHEY6735 NORMAL.jpg", alt: "SHEY6735 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-20", url: "/images/BirthdayPortrait/3 NORMAL.jpg", alt: "3 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-21", url: "/images/BirthdayPortrait/9 NORMAL.jpg", alt: "9 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-22", url: "/images/BirthdayPortrait/13 NORMAL.jpg", alt: "13 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-23", url: "/images/BirthdayPortrait/SHEY0356 NORMAL.jpg", alt: "SHEY0356 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-24", url: "/images/BirthdayPortrait/SHEY0609 NORMAL.jpg", alt: "SHEY0609 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-25", url: "/images/BirthdayPortrait/SHEY0730 NORMAL.jpg", alt: "SHEY0730 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-26", url: "/images/BirthdayPortrait/SHEY0780 NORMAL.jpg", alt: "SHEY0780 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-27", url: "/images/BirthdayPortrait/SHEY1175 NORMAL.jpg", alt: "SHEY1175 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-28", url: "/images/BirthdayPortrait/SHEY0112 NORMAL.jpg", alt: "SHEY0112 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-29", url: "/images/BirthdayPortrait/SHEY0136 NORMAL.jpg", alt: "SHEY0136 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-30", url: "/images/BirthdayPortrait/SHEY0046 NORMAL.jpg", alt: "SHEY0046 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-31", url: "/images/BirthdayPortrait/SHEY0067 NORMAL.jpg", alt: "SHEY0067 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-32", url: "/images/BirthdayPortrait/SHEY0120 NORMAL.jpg", alt: "SHEY0120 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-33", url: "/images/BirthdayPortrait/SHEY0247 NORMAL.jpg", alt: "SHEY0247 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-34", url: "/images/BirthdayPortrait/SHEY0115 NORMAL.jpg", alt: "SHEY0115 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-35", url: "/images/BirthdayPortrait/SHEY0172 NORMAL.jpg", alt: "SHEY0172 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-36", url: "/images/BirthdayPortrait/SHEY0225 NORMAL.jpg", alt: "SHEY0225 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-37", url: "/images/BirthdayPortrait/SHEY0243 NORMAL.jpg", alt: "SHEY0243 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-38", url: "/images/BirthdayPortrait/SHEY0280 NORMAL.jpg", alt: "SHEY0280 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-39", url: "/images/BirthdayPortrait/SHEY0250 NORMAL.jpg", alt: "SHEY0250 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-40", url: "/images/BirthdayPortrait/SHEY0359 NORMAL.jpg", alt: "SHEY0359 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-41", url: "/images/BirthdayPortrait/SHEY0832 NORMAL.jpg", alt: "SHEY0832 NORMAL", aspectRatio: "portrait" },
-        { id: "birthday-42", url: "/images/BirthdayPortrait/SHEY0099.jpg", alt: "SHEY0099", aspectRatio: "portrait" },
-        { id: "birthday-43", url: "/images/BirthdayPortrait/SHEY0131.jpg", alt: "SHEY0131", aspectRatio: "portrait" },
-        { id: "birthday-44", url: "/images/BirthdayPortrait/SHEY0014.jpg", alt: "SHEY0014", aspectRatio: "portrait" },
-        { id: "birthday-45", url: "/images/BirthdayPortrait/SHEY0065.jpg", alt: "SHEY0065", aspectRatio: "portrait" },
-        { id: "birthday-46", url: "/images/BirthdayPortrait/SHEY0199.jpg", alt: "SHEY0199", aspectRatio: "portrait" },
-        { id: "birthday-47", url: "/images/BirthdayPortrait/SHEY0041.jpg", alt: "SHEY0041", aspectRatio: "portrait" },
-        { id: "birthday-48", url: "/images/BirthdayPortrait/SHEY0151.jpg", alt: "SHEY0151", aspectRatio: "portrait" },
-        { id: "birthday-49", url: "/images/BirthdayPortrait/SHEY0438.jpg", alt: "SHEY0438", aspectRatio: "portrait" },
-        { id: "birthday-50", url: "/images/BirthdayPortrait/SHEY0836.jpg", alt: "SHEY0836", aspectRatio: "portrait" },
-        { id: "birthday-51", url: "/images/BirthdayPortrait/SHEY1104.jpg", alt: "SHEY1104", aspectRatio: "portrait" },
-        { id: "birthday-52", url: "/images/BirthdayPortrait/SHEY0551.jpg", alt: "SHEY0551", aspectRatio: "portrait" },
-        { id: "birthday-53", url: "/images/BirthdayPortrait/SHEY0188.jpg", alt: "SHEY0188", aspectRatio: "portrait" },
-        { id: "birthday-54", url: "/images/BirthdayPortrait/SHEY0194.jpg", alt: "SHEY0194", aspectRatio: "portrait" },
-        { id: "birthday-55", url: "/images/BirthdayPortrait/SHEY0332.jpg", alt: "SHEY0332", aspectRatio: "portrait" },
-        { id: "birthday-56", url: "/images/BirthdayPortrait/SHEY0073.jpg", alt: "SHEY0073", aspectRatio: "portrait" },
-        { id: "birthday-57", url: "/images/BirthdayPortrait/SHEY0150.jpg", alt: "SHEY0150", aspectRatio: "portrait" },
-        { id: "birthday-58", url: "/images/BirthdayPortrait/SHEY0168.jpg", alt: "SHEY0168", aspectRatio: "portrait" },
-        { id: "birthday-59", url: "/images/BirthdayPortrait/SHEY0049.jpg", alt: "SHEY0049", aspectRatio: "portrait" },
-        { id: "birthday-60", url: "/images/BirthdayPortrait/SHEY0210.jpg", alt: "SHEY0210", aspectRatio: "portrait" },
-        { id: "birthday-61", url: "/images/BirthdayPortrait/SHEY0322.jpg", alt: "SHEY0322", aspectRatio: "portrait" },
-        { id: "birthday-62", url: "/images/BirthdayPortrait/SHEY1457.jpg", alt: "SHEY1457", aspectRatio: "portrait" },
-        { id: "birthday-63", url: "/images/BirthdayPortrait/SHEY1618.jpg", alt: "SHEY1618", aspectRatio: "portrait" },
-        { id: "birthday-64", url: "/images/BirthdayPortrait/SHEY1730.jpg", alt: "SHEY1730", aspectRatio: "portrait" },
-        { id: "birthday-65", url: "/images/BirthdayPortrait/SHEY0290 1.jpg", alt: "SHEY0290 1", aspectRatio: "portrait" },
-        { id: "birthday-66", url: "/images/BirthdayPortrait/SHEY0191.jpg", alt: "SHEY0191", aspectRatio: "portrait" },
-        { id: "birthday-67", url: "/images/BirthdayPortrait/SHEY0249.jpg", alt: "SHEY0249", aspectRatio: "portrait" },
-        { id: "birthday-68", url: "/images/BirthdayPortrait/IMG_2152.JPG", alt: "IMG_2152", aspectRatio: "portrait" }
-      ]
+      images: []
     },
     family: {
       id: "family",
@@ -568,71 +490,7 @@ export async function getGalleryByCategory(slug: string): Promise<GalleryType | 
       slug: "wedding-portraits",
       name: "Wedding Portraits",
       description: "Timeless wedding portraits capturing the joy and love of your special day.",
-      images: [
-        { id: "wedding-portraits-1", url: "/images/WeddingPortraits/IMG_0212.jpg", alt: "IMG_0212", aspectRatio: "portrait" },
-        { id: "wedding-portraits-2", url: "/images/WeddingPortraits/IMG_0254.jpg", alt: "IMG_0254", aspectRatio: "portrait" },
-        { id: "wedding-portraits-3", url: "/images/WeddingPortraits/IMG_0689.jpg", alt: "IMG_0689", aspectRatio: "portrait" },
-        { id: "wedding-portraits-4", url: "/images/WeddingPortraits/IMG_0764.jpg", alt: "IMG_0764", aspectRatio: "portrait" },
-        { id: "wedding-portraits-5", url: "/images/WeddingPortraits/IMG_1000.jpg", alt: "IMG_1000", aspectRatio: "portrait" },
-        { id: "wedding-portraits-6", url: "/images/WeddingPortraits/SHEY1849.jpg", alt: "SHEY1849", aspectRatio: "portrait" },
-        { id: "wedding-portraits-7", url: "/images/WeddingPortraits/SHEY2077.jpg", alt: "SHEY2077", aspectRatio: "portrait" },
-        { id: "wedding-portraits-8", url: "/images/WeddingPortraits/SHEY2324.jpg", alt: "SHEY2324", aspectRatio: "portrait" },
-        { id: "wedding-portraits-9", url: "/images/WeddingPortraits/SHEY0482.jpg", alt: "SHEY0482", aspectRatio: "portrait" },
-        { id: "wedding-portraits-10", url: "/images/WeddingPortraits/SHEY0568.jpg", alt: "SHEY0568", aspectRatio: "portrait" },
-        { id: "wedding-portraits-11", url: "/images/WeddingPortraits/SHEY0573.jpg", alt: "SHEY0573", aspectRatio: "portrait" },
-        { id: "wedding-portraits-12", url: "/images/WeddingPortraits/SHEY1041.jpg", alt: "SHEY1041", aspectRatio: "portrait" },
-        { id: "wedding-portraits-13", url: "/images/WeddingPortraits/SHEY1575.jpg", alt: "SHEY1575", aspectRatio: "portrait" },
-        { id: "wedding-portraits-14", url: "/images/WeddingPortraits/SHEY2531.jpg", alt: "SHEY2531", aspectRatio: "portrait" },
-        { id: "wedding-portraits-15", url: "/images/WeddingPortraits/SHEY2537.jpg", alt: "SHEY2537", aspectRatio: "portrait" },
-        { id: "wedding-portraits-16", url: "/images/WeddingPortraits/SHEY2593.jpg", alt: "SHEY2593", aspectRatio: "portrait" },
-        { id: "wedding-portraits-17", url: "/images/WeddingPortraits/SHEY2660.jpg", alt: "SHEY2660", aspectRatio: "portrait" },
-        { id: "wedding-portraits-18", url: "/images/WeddingPortraits/SHEY2969.jpg", alt: "SHEY2969", aspectRatio: "portrait" },
-        { id: "wedding-portraits-19", url: "/images/WeddingPortraits/SHEY5251-Edit-Edit.jpg", alt: "SHEY5251-Edit-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-20", url: "/images/WeddingPortraits/SHEY5369-Edit-Edit.jpg", alt: "SHEY5369-Edit-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-21", url: "/images/WeddingPortraits/SHEY5493-Edit-Edit.jpg", alt: "SHEY5493-Edit-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-22", url: "/images/WeddingPortraits/SHEY5493-Edit-Edit-1.jpg", alt: "SHEY5493-Edit-Edit-1", aspectRatio: "portrait" },
-        { id: "wedding-portraits-23", url: "/images/WeddingPortraits/SHEY5839-Edit-Edit.jpg", alt: "SHEY5839-Edit-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-24", url: "/images/WeddingPortraits/SHEY0898-Edit.jpg", alt: "SHEY0898-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-25", url: "/images/WeddingPortraits/SHEY1026-Edit.jpg", alt: "SHEY1026-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-26", url: "/images/WeddingPortraits/SHEY1165-Edit.jpg", alt: "SHEY1165-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-27", url: "/images/WeddingPortraits/SHEY1233-Edit.jpg", alt: "SHEY1233-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-28", url: "/images/WeddingPortraits/SHEY1240-Edit.jpg", alt: "SHEY1240-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-29", url: "/images/WeddingPortraits/SHEY1250-Edit.jpg", alt: "SHEY1250-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-30", url: "/images/WeddingPortraits/SHEY1401-Edit.jpg", alt: "SHEY1401-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-31", url: "/images/WeddingPortraits/SHEY1517-Edit.jpg", alt: "SHEY1517-Edit", aspectRatio: "portrait" },
-        { id: "wedding-portraits-32", url: "/images/WeddingPortraits/SHEY9122_(2) 1 NORMAL.jpg", alt: "SHEY9122_(2) 1 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-33", url: "/images/WeddingPortraits/SHEY9152_(2) 1 NORMAL.jpg", alt: "SHEY9152_(2) 1 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-34", url: "/images/WeddingPortraits/SHEY9313_(2) 1 NORMAL.jpg", alt: "SHEY9313_(2) 1 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-35", url: "/images/WeddingPortraits/SHEY9327_(2) 1 NORMAL.jpg", alt: "SHEY9327_(2) 1 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-36", url: "/images/WeddingPortraits/SHEY0264-Ev NORMAL.jpg", alt: "SHEY0264-Ev NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-37", url: "/images/WeddingPortraits/SHEY0572-Ev NORMAL.jpg", alt: "SHEY0572-Ev NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-38", url: "/images/WeddingPortraits/9F2A2680-Ev 1 NORMAL.jpg", alt: "9F2A2680-Ev 1 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-39", url: "/images/WeddingPortraits/9F2A2767-Ev 1 NORMAL.jpg", alt: "9F2A2767-Ev 1 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-40", url: "/images/WeddingPortraits/SHEY0646-Ev 1 NORMAL.jpg", alt: "SHEY0646-Ev 1 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-41", url: "/images/WeddingPortraits/SHEY0949 NORMAL.jpg", alt: "SHEY0949 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-42", url: "/images/WeddingPortraits/SHEY1007 NORMAL.jpg", alt: "SHEY1007 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-43", url: "/images/WeddingPortraits/SHEY1262 NORMAL.jpg", alt: "SHEY1262 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-44", url: "/images/WeddingPortraits/SHEY1294 NORMAL.jpg", alt: "SHEY1294 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-45", url: "/images/WeddingPortraits/SHEY1296 NORMAL.jpg", alt: "SHEY1296 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-46", url: "/images/WeddingPortraits/SHEY1306 NORMAL.jpg", alt: "SHEY1306 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-47", url: "/images/WeddingPortraits/SHEY0377 NORMAL.jpg", alt: "SHEY0377 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-48", url: "/images/WeddingPortraits/SHEY0417 NORMAL.jpg", alt: "SHEY0417 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-49", url: "/images/WeddingPortraits/SHEY0714 NORMAL.jpg", alt: "SHEY0714 NORMAL", aspectRatio: "portrait" },
-        { id: "wedding-portraits-50", url: "/images/WeddingPortraits/SHEY0164.jpg", alt: "SHEY0164", aspectRatio: "portrait" },
-        { id: "wedding-portraits-51", url: "/images/WeddingPortraits/SHEY0169.jpg", alt: "SHEY0169", aspectRatio: "portrait" },
-        { id: "wedding-portraits-52", url: "/images/WeddingPortraits/SHEY0909.jpg", alt: "SHEY0909", aspectRatio: "portrait" },
-        { id: "wedding-portraits-53", url: "/images/WeddingPortraits/SHEY0436.jpg", alt: "SHEY0436", aspectRatio: "portrait" },
-        { id: "wedding-portraits-54", url: "/images/WeddingPortraits/SHEY1151.jpg", alt: "SHEY1151", aspectRatio: "portrait" },
-        { id: "wedding-portraits-55", url: "/images/WeddingPortraits/SHEY1339.jpg", alt: "SHEY1339", aspectRatio: "portrait" },
-        { id: "wedding-portraits-56", url: "/images/WeddingPortraits/SHEY1354.jpg", alt: "SHEY1354", aspectRatio: "portrait" },
-        { id: "wedding-portraits-57", url: "/images/WeddingPortraits/SHEY1393.jpg", alt: "SHEY1393", aspectRatio: "portrait" },
-        { id: "wedding-portraits-58", url: "/images/WeddingPortraits/SHEY1405.jpg", alt: "SHEY1405", aspectRatio: "portrait" },
-        { id: "wedding-portraits-59", url: "/images/WeddingPortraits/SHEY1427.jpg", alt: "SHEY1427", aspectRatio: "portrait" },
-        { id: "wedding-portraits-60", url: "/images/WeddingPortraits/SHEY2640.jpg", alt: "SHEY2640", aspectRatio: "portrait" },
-        { id: "wedding-portraits-61", url: "/images/WeddingPortraits/SHEY2678 1.jpg", alt: "SHEY2678 1", aspectRatio: "portrait" },
-        { id: "wedding-portraits-62", url: "/images/WeddingPortraits/SHEY2717 1.jpg", alt: "SHEY2717 1", aspectRatio: "portrait" },
-        { id: "wedding-portraits-63", url: "/images/WeddingPortraits/SHEY2735 1.jpg", alt: "SHEY2735 1", aspectRatio: "portrait" }
-      ]
+      images: []
     },
     "pre-wedding-portraits": {
       id: "pre-wedding-portraits",
@@ -708,5 +566,20 @@ export async function getGalleryByCategory(slug: string): Promise<GalleryType | 
     }
   };
   
-  return galleries[slug] || null;
+  const localFolderBySlug: Record<string, { folder: string; idPrefix: string }> = {
+    birthday: { folder: "BirthdayPortrait", idPrefix: "birthday" },
+    convocation: { folder: "Convocation", idPrefix: "convocation" },
+    maternity: { folder: "Maternity", idPrefix: "maternity" },
+    "wedding-portraits": { folder: "WeddingPortraits", idPrefix: "wedding-portraits" }
+  };
+
+  const gallery = galleries[slug];
+  if (!gallery) return null;
+
+  const local = localFolderBySlug[slug];
+  if (local) {
+    gallery.images = await listLocalGalleryImages(local.folder, local.idPrefix);
+  }
+
+  return gallery;
 }

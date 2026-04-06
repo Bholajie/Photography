@@ -29,7 +29,7 @@ export default function Footer() {
           <div>
             <h3 className="font-display text-xl mb-4">Sheyilor Photography</h3>
             <p className="text-muted-foreground mb-4">
-              Capturing life's moments with artistry and emotion.
+              Capturing life&apos;s moments with artistry and emotion.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social, index) => (
@@ -78,7 +78,7 @@ export default function Footer() {
             <address className="not-italic text-muted-foreground">
               <p>Lagos, Nigeria</p>
               <p className="mt-2">+2348167976266</p>
-              <p className="mt-2">sheyilorphotography@gmail.com</p>
+              <p className="mt-2">booksheyilorphotography@gmail.com</p>
             </address>
           </div>
         </div>

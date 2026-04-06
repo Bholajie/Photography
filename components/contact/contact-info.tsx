@@ -15,7 +15,7 @@ export default function ContactInfo() {
       icon: <Mail className="h-5 w-5 text-accent" />,
       title: "Email",
       details: [
-        { label: "General Inquiries", value: "sheyilorphotography@gmail.com" }
+        { label: "General Inquiries", value: "booksheyilorphotography@gmail.com" }
       ]
     },
     {
@@ -58,7 +58,7 @@ export default function ContactInfo() {
       <div>
         <h2 className="text-2xl font-display mb-6">Contact Information</h2>
         <p className="text-muted-foreground mb-8">
-          Have questions about our services or want to book a session? We'd love to hear from you.
+          Have questions about our services or want to book a session? We&apos;d love to hear from you.
         </p>
       </div>
       

@@ -149,7 +149,8 @@ export async function POST(request: Request) {
 
     const { data, error } = await resend.emails.send({
       from: 'Sheyilor Photography <onboarding@resend.dev>',
-      to: 'sheyilorphotography@gmail.com',
+      to: 'booksheyilorphotography@gmail.com',
+      replyTo: 'booksheyilorphotography@gmail.com',
       subject: subject,
       html: `
         <!DOCTYPE html>
@@ -278,7 +279,8 @@ export async function POST(request: Request) {
 
     // Send confirmation email to client
     const clientEmail = await resend.emails.send({
-      from: 'Sheyilor Photography <bookings@sheyilorphotography.com>',
+      from: 'Sheyilor Photography <onboarding@resend.dev>',
+      replyTo: 'booksheyilorphotography@gmail.com',
       to: email,
       subject: isWedding ? 'Wedding Photography Consultation Request Received' : 'Booking Request Received',
       html: `
@@ -359,7 +361,7 @@ export async function POST(request: Request) {
                 <p>Best regards,</p>
                 <p>The Sheyilor Photography Team</p>
                 <p>Phone: +234 XXX XXX XXXX</p>
-                <p>Email: sheyilorphotography@gmail.com</p>
+                <p>Email: booksheyilorphotography@gmail.com</p>
               </div>
             </div>
           </body>
