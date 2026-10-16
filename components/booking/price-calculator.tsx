@@ -1,7 +1,9 @@
-import { PackageType } from "@/lib/types"
+import { AdditionalFees, DeliveryFees, PackageType } from "@/lib/types"
 
 interface PriceCalculatorProps {
   selectedPackage: PackageType | null
+  deliveryFees: DeliveryFees
+  additionalFees: AdditionalFees
   numberOfOutfits: number
   locationType: string
   location: string
@@ -10,6 +12,8 @@ interface PriceCalculatorProps {
 
 export default function PriceCalculator({
   selectedPackage,
+  deliveryFees,
+  additionalFees,
   numberOfOutfits,
   locationType,
   location,
@@ -20,11 +24,11 @@ export default function PriceCalculator({
   const getLogisticsFee = (location: string) => {
     switch (location) {
       case "mainland":
-        return 25000
+        return deliveryFees["outdoor-mainland"]
       case "ikoyi-lekki":
-        return 35000
+        return deliveryFees["outdoor-ikoyi-lekki"]
       case "lekki2-ajah":
-        return 40000
+        return deliveryFees["outdoor-lekki2-ajah"]
       default:
         return 0
     }
@@ -33,24 +37,26 @@ export default function PriceCalculator({
   const getHomeServiceFee = (location: string) => {
     switch (location) {
       case "mainland":
-        return 55000
+        return deliveryFees["home-mainland"]
       case "vi-ikoyi":
-        return 85000
+        return deliveryFees["home-vi-ikoyi"]
       case "lekki-lekki2":
-        return 105000
+        return deliveryFees["home-lekki-lekki2"]
       default:
         return 0
     }
   }
 
   const getAdditionalOptionPrice = (option: string): { label: string; price: number } => {
-    if (option.includes("express")) return { label: "Express Service", price: 20000 }
-    if (option.includes("extra-selections")) return { label: "Extra Selections", price: 10000 }
-    if (option.includes("photobook-30")) return { label: "Photobook 30 pages", price: 150000 }
-    if (option.includes("photobook-40")) return { label: "Photobook 40 pages", price: 180000 }
-    if (option.includes("frame")) return { label: "Large Frame", price: 35000 }
-    if (option.includes("flash-drive")) return { label: "Extra Flash Drive", price: 10000 }
-    if (option.includes("drone")) return { label: "Drone Coverage", price: 100000 }
+    if (option === "express") return { label: "Express Service", price: additionalFees.express }
+    if (option === "express-delivery") return { label: "Express Delivery", price: additionalFees["express-delivery"] }
+    if (option === "extra-selections") return { label: "Extra Image Selection", price: additionalFees["extra-selections"] }
+    if (option === "lateness-fee") return { label: "Lateness Fee", price: additionalFees["lateness-fee"] }
+    if (option === "photobook-30") return { label: "Photobook 30 pages", price: additionalFees["photobook-30"] }
+    if (option === "photobook-40") return { label: "Photobook 40 pages", price: additionalFees["photobook-40"] }
+    if (option === "frame") return { label: "Large Fibre Frame", price: additionalFees.frame }
+    if (option === "flash-drive") return { label: "Extra Flash Drive", price: additionalFees["flash-drive"] }
+    if (option === "drone") return { label: "Drone Coverage", price: additionalFees.drone }
     return { label: option, price: 0 }
   }
 
@@ -78,7 +84,7 @@ export default function PriceCalculator({
     ? getLogisticsFee(location)
     : 0
 
-  const additionalOptionsDetails = isEventPackage ? calculateAdditionalOptionsCost(additionalOptions) : []
+  const additionalOptionsDetails = calculateAdditionalOptionsCost(additionalOptions)
   const additionalCost = additionalOptionsDetails.reduce((sum, option) => sum + option.price, 0)
   const totalPrice = basePrice + locationFee + additionalCost
 
@@ -99,7 +105,7 @@ export default function PriceCalculator({
             }: ₦{locationFee.toLocaleString()}
           </p>
         )}
-        {isEventPackage && additionalOptionsDetails.length > 0 && (
+        {additionalOptionsDetails.length > 0 && (
           <>
             <p className="font-medium mt-2">Additional Options:</p>
             <div className="pl-4 space-y-1">
@@ -119,4 +125,4 @@ export default function PriceCalculator({
       </div>
     </div>
   )
-} 
+}

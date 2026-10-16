@@ -15,7 +15,7 @@ import { format } from "date-fns"
 import { CalendarIcon, Check } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
-import { PackageType } from "@/lib/types"
+import { AdditionalFees, DeliveryFees, PackageType } from "@/lib/types"
 import { Checkbox } from "@/components/ui/checkbox"
 import PriceCalculator from "./price-calculator"
 
@@ -52,10 +52,12 @@ type BookingFormValues = z.infer<typeof bookingFormSchema>
 
 interface BookingFormProps {
   packages: PackageType[]
+  deliveryFees: DeliveryFees
+  additionalFees: AdditionalFees
   selectedPackageId?: string
 }
 
-export default function BookingForm({ packages, selectedPackageId }: BookingFormProps) {
+export default function BookingForm({ packages, deliveryFees, additionalFees, selectedPackageId }: BookingFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedPackage, setSelectedPackage] = useState<PackageType | null>(null)
   const [selectedLocationType, setSelectedLocationType] = useState<string>("")
@@ -89,11 +91,11 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
   const getLogisticsFee = (location: string) => {
     switch (location) {
       case "mainland":
-        return 25000
+        return deliveryFees["outdoor-mainland"]
       case "ikoyi-lekki":
-        return 35000
+        return deliveryFees["outdoor-ikoyi-lekki"]
       case "lekki2-ajah":
-        return 40000
+        return deliveryFees["outdoor-lekki2-ajah"]
       default:
         return 0
     }
@@ -102,24 +104,26 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
   const getHomeServiceFee = (location: string) => {
     switch (location) {
       case "mainland":
-        return 55000
+        return deliveryFees["home-mainland"]
       case "vi-ikoyi":
-        return 85000
+        return deliveryFees["home-vi-ikoyi"]
       case "lekki-lekki2":
-        return 105000
+        return deliveryFees["home-lekki-lekki2"]
       default:
         return 0
     }
   }
 
   const additionalOptions = [
-    { id: "express", label: "Express Service (+₦20,000)" },
-    { id: "extra-selections", label: "Extra Selections (+₦10,000 per extra)" },
-    { id: "photobook-30", label: "Photobook 30 pages (+₦150,000)" },
-    { id: "photobook-40", label: "Photobook 40 pages (+₦180,000)" },
-    { id: "frame", label: "Large Frame (+₦35,000)" },
-    { id: "flash-drive", label: "Extra Flash Drive (+₦10,000)" },
-    { id: "drone", label: "Drone Coverage (+₦100,000 per day)" },
+    { id: "express", label: `Express Service (+₦${additionalFees.express.toLocaleString()})` },
+    { id: "express-delivery", label: `Express Delivery (+₦${additionalFees["express-delivery"].toLocaleString()})` },
+    { id: "extra-selections", label: `Extra Image Selection (+₦${additionalFees["extra-selections"].toLocaleString()} per extra)` },
+    { id: "lateness-fee", label: `Lateness Fee (+₦${additionalFees["lateness-fee"].toLocaleString()})` },
+    { id: "photobook-30", label: `Photobook 30 pages (+₦${additionalFees["photobook-30"].toLocaleString()})` },
+    { id: "photobook-40", label: `Photobook 40 pages (+₦${additionalFees["photobook-40"].toLocaleString()})` },
+    { id: "frame", label: `Large Fibre Frame (+₦${additionalFees.frame.toLocaleString()})` },
+    { id: "flash-drive", label: `Extra Flash Drive (+₦${additionalFees["flash-drive"].toLocaleString()})` },
+    { id: "drone", label: `Drone Coverage (+₦${additionalFees.drone.toLocaleString()} per day)` },
   ]
 
   const locationOptions = [
@@ -129,15 +133,15 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
   ]
 
   const outdoorLocations = [
-    { id: "mainland", label: "Mainland (₦25,000)" },
-    { id: "ikoyi-lekki", label: "Ikoyi/Lekki (₦35,000)" },
-    { id: "lekki2-ajah", label: "Lekki 2/Ajah (₦40,000)" },
+    { id: "mainland", label: `Mainland (₦${deliveryFees["outdoor-mainland"].toLocaleString()})` },
+    { id: "ikoyi-lekki", label: `Ikoyi/Lekki (₦${deliveryFees["outdoor-ikoyi-lekki"].toLocaleString()})` },
+    { id: "lekki2-ajah", label: `Lekki 2/Ajah (₦${deliveryFees["outdoor-lekki2-ajah"].toLocaleString()})` },
   ]
 
   const homeLocations = [
-    { id: "mainland", label: "Mainland (₦55,000)" },
-    { id: "vi-ikoyi", label: "VI/Ikoyi (₦85,000)" },
-    { id: "lekki-lekki2", label: "Lekki/Lekki 2 (₦105,000)" },
+    { id: "mainland", label: `Mainland (₦${deliveryFees["home-mainland"].toLocaleString()})` },
+    { id: "vi-ikoyi", label: `VI/Ikoyi (₦${deliveryFees["home-vi-ikoyi"].toLocaleString()})` },
+    { id: "lekki-lekki2", label: `Lekki/Lekki 2 (₦${deliveryFees["home-lekki-lekki2"].toLocaleString()})` },
   ]
 
   const onSubmit = async (data: BookingFormValues) => {
@@ -396,94 +400,96 @@ export default function BookingForm({ packages, selectedPackageId }: BookingForm
                 />
               )}
 
-              {selectedPackage.id.startsWith("event-") && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="location"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Event Location</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select event location" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {outdoorLocations.map((option) => (
-                              <SelectItem key={option.id} value={option.id}>
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+              {Boolean(selectedPackage) && (
+                <FormField
+                  control={form.control}
+                  name="additionalOptions"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel>Additional Options</FormLabel>
                         <FormDescription>
-                          Select the area where your event will take place for logistics fee calculation
+                          Select any additional services you'd like to add to your package
                         </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="additionalOptions"
-                    render={() => (
-                      <FormItem>
-                        <div className="mb-4">
-                          <FormLabel>Additional Options</FormLabel>
-                          <FormDescription>
-                            Select any additional services you'd like to add to your package
-                          </FormDescription>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {additionalOptions.map((option) => (
-                            <FormField
-                              key={option.id}
-                              control={form.control}
-                              name="additionalOptions"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem
-                                    key={option.id}
-                                    className="flex flex-row items-start space-x-3 space-y-0"
-                                  >
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value?.includes(option.id)}
-                                        onCheckedChange={(checked) => {
-                                          return checked
-                                            ? field.onChange([...field.value || [], option.id])
-                                            : field.onChange(
-                                                field.value?.filter(
-                                                  (value) => value !== option.id
-                                                )
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {additionalOptions.map((option) => (
+                          <FormField
+                            key={option.id}
+                            control={form.control}
+                            name="additionalOptions"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={option.id}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(option.id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...field.value || [], option.id])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== option.id
                                               )
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">
-                                      {option.label}
-                                    </FormLabel>
-                                  </FormItem>
-                                )
-                              }}
-                            />
+                                            )
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    {option.label}
+                                  </FormLabel>
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {selectedPackage.id.startsWith("event-") && (
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Event Location</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select event location" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {outdoorLocations.map((option) => (
+                            <SelectItem key={option.id} value={option.id}>
+                              {option.label}
+                            </SelectItem>
                           ))}
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Select the area where your event will take place for logistics fee calculation
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
 
               <PriceCalculator
                 selectedPackage={selectedPackage}
+                deliveryFees={deliveryFees}
+                additionalFees={additionalFees}
                 numberOfOutfits={selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection" || selectedPackage.id === "call-to-bar" || selectedPackage.id === "convocation" ? numberOfOutfits : 1}
                 locationType={selectedLocationType}
                 location={form.watch("location") || ""}

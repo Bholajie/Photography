@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { format } from 'date-fns';
-import { getPackages } from '@/lib/packages';
+import { getPricingConfig } from '@/lib/pricing';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
     const formData = await request.json();
-    const packages = await getPackages();
+    const { packages, deliveryFees, additionalFees } = await getPricingConfig();
     const { 
       name, 
       email, 
@@ -29,30 +29,32 @@ export async function POST(request: Request) {
     
     const getLogisticsFee = (location: string) => {
       switch (location) {
-        case "mainland": return 25000;
-        case "ikoyi-lekki": return 35000;
-        case "lekki2-ajah": return 40000;
+        case "mainland": return deliveryFees["outdoor-mainland"];
+        case "ikoyi-lekki": return deliveryFees["outdoor-ikoyi-lekki"];
+        case "lekki2-ajah": return deliveryFees["outdoor-lekki2-ajah"];
         default: return 0;
       }
     };
 
     const getHomeServiceFee = (location: string) => {
       switch (location) {
-        case "mainland": return 55000;
-        case "vi-ikoyi": return 85000;
-        case "lekki-lekki2": return 105000;
+        case "mainland": return deliveryFees["home-mainland"];
+        case "vi-ikoyi": return deliveryFees["home-vi-ikoyi"];
+        case "lekki-lekki2": return deliveryFees["home-lekki-lekki2"];
         default: return 0;
       }
     };
 
     const getAdditionalOptionPrice = (option: string): { label: string; price: number } => {
-      if (option.includes("express")) return { label: "Express Service", price: 20000 }
-      if (option.includes("extra-selections")) return { label: "Extra Selections", price: 10000 }
-      if (option.includes("photobook-30")) return { label: "Photobook 30 pages", price: 150000 }
-      if (option.includes("photobook-40")) return { label: "Photobook 40 pages", price: 180000 }
-      if (option.includes("frame")) return { label: "Large Frame", price: 35000 }
-      if (option.includes("flash-drive")) return { label: "Extra Flash Drive", price: 10000 }
-      if (option.includes("drone")) return { label: "Drone Coverage", price: 100000 }
+      if (option === "express") return { label: "Express Service", price: additionalFees.express }
+      if (option === "express-delivery") return { label: "Express Delivery", price: additionalFees["express-delivery"] }
+      if (option === "extra-selections") return { label: "Extra Image Selection", price: additionalFees["extra-selections"] }
+      if (option === "lateness-fee") return { label: "Lateness Fee", price: additionalFees["lateness-fee"] }
+      if (option === "photobook-30") return { label: "Photobook 30 pages", price: additionalFees["photobook-30"] }
+      if (option === "photobook-40") return { label: "Photobook 40 pages", price: additionalFees["photobook-40"] }
+      if (option === "frame") return { label: "Large Fibre Frame", price: additionalFees.frame }
+      if (option === "flash-drive") return { label: "Extra Flash Drive", price: additionalFees["flash-drive"] }
+      if (option === "drone") return { label: "Drone Coverage", price: additionalFees.drone }
       return { label: option, price: 0 }
     }
 
@@ -85,8 +87,8 @@ export async function POST(request: Request) {
       ? getLogisticsFee(location)
       : 0;
 
-    // Calculate additional options cost (only for event packages)
-    const additionalOptionsDetails = isEventPackage ? calculateAdditionalOptionsCost(additionalOptions || []) : [];
+    // Calculate additional options cost for bookable photo packages.
+    const additionalOptionsDetails = calculateAdditionalOptionsCost(additionalOptions || []);
     const additionalCost = additionalOptionsDetails.reduce((sum, option) => sum + option.price, 0);
     
     const totalPrice = basePrice + locationFee + additionalCost;

@@ -6,15 +6,16 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { useInView } from "framer-motion"
 import { useRef } from "react"
-import { PackageType } from "@/lib/types"
+import { AdditionalFees, PackageType } from "@/lib/types"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface PackageListProps {
   packages: PackageType[]
+  additionalFees: AdditionalFees
   onSelectPackage: (packageId: string) => void
 }
 
-export default function PackageList({ packages, onSelectPackage }: PackageListProps) {
+export default function PackageList({ packages, additionalFees, onSelectPackage }: PackageListProps) {
   const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: true })
 
@@ -101,6 +102,40 @@ export default function PackageList({ packages, onSelectPackage }: PackageListPr
           ))}
         </TabsContent>
       </Tabs>
+
+      <div className="rounded-lg border bg-accent/5 p-6">
+        <h2 className="text-xl font-display">Additional Fees</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          These fees are available as add-ons when they apply to your booking.
+        </p>
+
+        <div className="mt-5 grid gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
+          <FeeRow label="Express Service" amount={additionalFees.express} />
+          <FeeRow label="Express Delivery" amount={additionalFees["express-delivery"]} />
+          <FeeRow label="Extra Image Selection" amount={additionalFees["extra-selections"]} suffix=" per extra" />
+          <FeeRow label="Lateness Fee" amount={additionalFees["lateness-fee"]} />
+        </div>
+
+        <div className="mt-5 border-t border-accent/20 pt-4">
+          <h3 className="font-medium">Wedding Add-ons</h3>
+          <div className="mt-3 grid gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
+            <FeeRow label="Photobook · 30 pages" amount={additionalFees["photobook-30"]} />
+            <FeeRow label="Photobook · 40 pages" amount={additionalFees["photobook-40"]} />
+            <FeeRow label="Large Fibre Frame" amount={additionalFees.frame} />
+            <FeeRow label="Extra Flash Drive" amount={additionalFees["flash-drive"]} />
+            <FeeRow label="Drone Service" amount={additionalFees.drone} suffix=" per day" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function FeeRow({ label, amount, suffix = "" }: { label: string; amount: number; suffix?: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 border-b border-accent/10 pb-2 last:border-b-0">
+      <span>{label}{suffix}</span>
+      <span className="whitespace-nowrap font-medium">₦{amount.toLocaleString()}</span>
     </div>
   )
 }

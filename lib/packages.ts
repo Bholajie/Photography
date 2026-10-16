@@ -1,13 +1,12 @@
 import { PackageType } from "./types";
 
-// This would be replaced with MongoDB data in a real implementation
-export async function getPackages(): Promise<PackageType[]> {
+export function getDefaultPackages(): PackageType[] {
   return [
     // Portrait Packages
     {
       id: "portrait",
       name: "Portrait Session",
-      price: 70000,
+      price: 100000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
       shortDescription: "Professional portrait photography at SHEYILOR STUDIO (Available between 9am - 5pm)",
@@ -25,7 +24,7 @@ export async function getPackages(): Promise<PackageType[]> {
     {
       id: "family-portrait",
       name: "Family/Group Portrait",
-      price: 100000,
+      price: 150000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
       shortDescription: "Perfect for family and group portraits at SHEYILOR STUDIO (Available between 9am - 5pm)",
@@ -43,7 +42,7 @@ export async function getPackages(): Promise<PackageType[]> {
     {
       id: "fashion-collection",
       name: "Fashion Collection Shoot",
-      price: 25000,
+      price: 50000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
       shortDescription: "Professional fashion photography for 10+ outfits at client's location",
@@ -53,7 +52,7 @@ export async function getPackages(): Promise<PackageType[]> {
         "Minimum 10 outfits",
         "Professional editing",
         "2 working days delivery",
-        "Extra images: ₦10,000 per extra",
+        "Extra images: ₦15,000 per extra",
         "Online gallery",
         "Logistics fee applies based on location"
       ],
@@ -236,7 +235,7 @@ export async function getPackages(): Promise<PackageType[]> {
     {
       id: "convocation",
       name: "Convocation Session",
-      price: 50000,
+      price: 80000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
       shortDescription: "Professional convocation photography at SHEYILOR STUDIO",
@@ -254,7 +253,7 @@ export async function getPackages(): Promise<PackageType[]> {
     {
       id: "call-to-bar",
       name: "Call to Bar Session",
-      price: 50000,
+      price: 100000,
       priceSuffix: " per outfit",
       duration: "2 Working days",
       shortDescription: "Professional Call to Bar photography at SHEYILOR STUDIO",
@@ -270,4 +269,10 @@ export async function getPackages(): Promise<PackageType[]> {
       image: "/images/CallToBar/SHEY0295.jpg"
     }
   ];
+}
+
+// Kept for existing server-side callers. Public pages load the editable pricing
+// through /api/pricing so the browser always receives the latest values.
+export async function getPackages(): Promise<PackageType[]> {
+  return getDefaultPackages();
 }
