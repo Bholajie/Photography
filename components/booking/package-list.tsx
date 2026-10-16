@@ -46,12 +46,12 @@ export default function PackageList({ packages, additionalFees, onSelectPackage 
       <h2 className="text-2xl font-display mb-4">Choose Your Package</h2>
       
       <Tabs defaultValue="portrait" className="w-full">
-        <TabsList className="flex overflow-x-auto pl-4 gap-2 bg-muted whitespace-nowrap no-scrollbar scroll-px-4 md:grid md:grid-cols-5 md:gap-4 md:p-2 md:pl-0">
-          <TabsTrigger value="portrait" className="ml-16 md:ml-0">Portrait</TabsTrigger>
-          <TabsTrigger value="event">Events</TabsTrigger>
-          <TabsTrigger value="event-video">Photo + Video</TabsTrigger>
-          <TabsTrigger value="wedding">Wedding</TabsTrigger>
-          <TabsTrigger value="training" >Training</TabsTrigger>
+        <TabsList className="flex w-full justify-start overflow-x-auto pl-4 gap-2 bg-muted whitespace-nowrap no-scrollbar scroll-px-4 md:grid md:grid-cols-5 md:justify-center md:gap-4 md:p-2 md:pl-0">
+          <TabsTrigger value="portrait" className="shrink-0 md:w-full">Portrait</TabsTrigger>
+          <TabsTrigger value="event" className="shrink-0 md:w-full">Event Photos</TabsTrigger>
+          <TabsTrigger value="event-video" className="shrink-0 md:w-full">Events Photos-Videos</TabsTrigger>
+          <TabsTrigger value="wedding" className="shrink-0 md:w-full">Wedding</TabsTrigger>
+          <TabsTrigger value="training" className="shrink-0 md:w-full">Training</TabsTrigger>
         </TabsList>
 
         <TabsContent value="portrait" className="space-y-6">
