@@ -1,20 +1,9 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter, Playfair_Display } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 import Favicon from './favicon';
-
-const inter = Inter({ 
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
-
-const playfair = Playfair_Display({ 
-  subsets: ['latin'],
-  variable: '--font-playfair',
-});
 
 export const metadata: Metadata = {
   title: 'Sheyilor Photography',
@@ -36,7 +25,7 @@ export default function RootLayout({
       <head>
         <Favicon />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} font-sans`}>
+      <body className="font-sans">
         <ThemeProvider attribute="class" defaultTheme="light">
           <Navbar />
           <main>{children}</main>
