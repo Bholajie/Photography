@@ -1,4 +1,5 @@
 import { AdditionalFees, DeliveryFees, PackageType } from "@/lib/types"
+import { isLocationBasedPackage, isPerOutfitPackage } from "@/lib/packages"
 
 interface PriceCalculatorProps {
   selectedPackage: PackageType | null
@@ -64,21 +65,18 @@ export default function PriceCalculator({
     return options.map(option => getAdditionalOptionPrice(option))
   }
 
-  const isOutfitBasedPackage = selectedPackage.id === "portrait" || 
-    selectedPackage.id === "family-portrait" || 
-    selectedPackage.id === "fashion-collection" ||
-    selectedPackage.id === "call-to-bar" ||
-    selectedPackage.id === "convocation"
+  const isLocationBased = isLocationBasedPackage(selectedPackage.id)
+  const isPerOutfit = isPerOutfitPackage(selectedPackage.id)
 
   const isEventPackage = selectedPackage.id.startsWith("event-")
 
-  const basePrice = isOutfitBasedPackage 
+  const basePrice = isPerOutfit
     ? selectedPackage.price * numberOfOutfits 
     : selectedPackage.price
 
-  const locationFee = (isOutfitBasedPackage && locationType === "outdoor") 
+  const locationFee = (isLocationBased && locationType === "outdoor")
     ? getLogisticsFee(location)
-    : (isOutfitBasedPackage && locationType === "home")
+    : (isLocationBased && locationType === "home")
     ? getHomeServiceFee(location)
     : (isEventPackage && location)
     ? getLogisticsFee(location)
@@ -92,14 +90,14 @@ export default function PriceCalculator({
     <div className="bg-accent/5 p-4 rounded-lg space-y-2">
       <h3 className="font-medium mb-2">Price Breakdown</h3>
       <div className="text-sm space-y-1">
-        {isOutfitBasedPackage ? (
+        {isPerOutfit ? (
           <p>Base Price ({numberOfOutfits} {numberOfOutfits === 1 ? 'outfit' : 'outfits'}): ₦{basePrice.toLocaleString()}</p>
         ) : (
           <p>Base Price: ₦{basePrice.toLocaleString()}</p>
         )}
         {locationFee > 0 && (
           <p>
-            {isOutfitBasedPackage 
+            {isLocationBased
               ? (locationType === "outdoor" ? "Logistics Fee" : "Home Service Fee")
               : "Logistics Fee"
             }: ₦{locationFee.toLocaleString()}

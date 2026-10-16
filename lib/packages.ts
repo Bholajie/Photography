@@ -1,5 +1,31 @@
 import { PackageType } from "./types";
 
+export const LOCATION_BASED_PACKAGE_IDS = [
+  "portrait",
+  "family-portrait",
+  "fashion-individual",
+  "fashion-half",
+  "fashion-full",
+  "call-to-bar",
+  "convocation",
+] as const;
+
+export const PER_OUTFIT_PACKAGE_IDS = [
+  "portrait",
+  "family-portrait",
+  "fashion-individual",
+  "call-to-bar",
+  "convocation",
+] as const;
+
+export function isLocationBasedPackage(packageId: string) {
+  return LOCATION_BASED_PACKAGE_IDS.includes(packageId as typeof LOCATION_BASED_PACKAGE_IDS[number]);
+}
+
+export function isPerOutfitPackage(packageId: string) {
+  return PER_OUTFIT_PACKAGE_IDS.includes(packageId as typeof PER_OUTFIT_PACKAGE_IDS[number]);
+}
+
 export function getDefaultPackages(): PackageType[] {
   return [
     // Portrait Packages
@@ -40,19 +66,56 @@ export function getDefaultPackages(): PackageType[] {
       image: "/images/FamilyPortrait/SHEY0045.jpg"
     },
     {
-      id: "fashion-collection",
-      name: "Fashion Collection Shoot",
+      id: "fashion-individual",
+      name: "Individual Outfits",
       price: 50000,
       priceSuffix: " per outfit",
-      duration: "2 Working days",
-      shortDescription: "Professional fashion photography for 10+ outfits at client's location",
+      duration: "2–5 Working days",
+      shortDescription: "Fashion photography for collections with fewer than 5 outfits",
       features: [
         "Location: Client's location",
+        "Applicable to collections with fewer than 5 outfits",
+        "2 working days for 1 outfit",
+        "3–5 working days for more than 1 outfit",
         "3 images per outfit",
-        "Minimum 10 outfits",
         "Professional editing",
-        "2 working days delivery",
-        "Extra images: ₦15,000 per extra",
+        "Online gallery",
+        "Logistics fee applies based on location"
+      ],
+      image: "/images/FashionCollection/SHEY0279.jpg"
+    },
+    {
+      id: "fashion-half",
+      name: "Half Collection",
+      price: 250000,
+      priceSuffix: "",
+      duration: "2–5 Working days",
+      shortDescription: "Half fashion collection at the client's location",
+      features: [
+        "Location: Client's location",
+        "2 working days for 1 outfit",
+        "3–5 working days for more than 1 outfit",
+        "3 images per outfit",
+        "Professional editing",
+        "Online gallery",
+        "Logistics fee applies based on location"
+      ],
+      image: "/images/FashionCollection/SHEY0279.jpg"
+    },
+    {
+      id: "fashion-full",
+      name: "Full Collection",
+      price: 450000,
+      priceSuffix: "",
+      duration: "2–5 Working days",
+      shortDescription: "Full fashion collection for 10 or more outfits",
+      features: [
+        "Location: Client's location",
+        "Minimum of 10 outfits",
+        "2 working days for 1 outfit",
+        "3–5 working days for more than 1 outfit",
+        "3 images per outfit",
+        "Professional editing",
         "Online gallery",
         "Logistics fee applies based on location"
       ],

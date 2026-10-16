@@ -22,7 +22,9 @@ export default function PackageList({ packages, additionalFees, onSelectPackage 
   const portraitPackages = packages.filter(pkg => 
     pkg.id === "portrait" || 
     pkg.id === "family-portrait" || 
-    pkg.id === "fashion-collection" ||
+    pkg.id === "fashion-individual" ||
+    pkg.id === "fashion-half" ||
+    pkg.id === "fashion-full" ||
     pkg.id === "convocation" ||
     pkg.id === "call-to-bar"
   )

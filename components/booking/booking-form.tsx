@@ -16,6 +16,7 @@ import { CalendarIcon, Check } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { AdditionalFees, DeliveryFees, PackageType } from "@/lib/types"
+import { isLocationBasedPackage, isPerOutfitPackage } from "@/lib/packages"
 import { Checkbox } from "@/components/ui/checkbox"
 import PriceCalculator from "./price-calculator"
 
@@ -203,7 +204,9 @@ export default function BookingForm({ packages, deliveryFees, additionalFees, se
                   <SelectContent>
                     <SelectItem value="portrait">Portrait Session</SelectItem>
                     <SelectItem value="family-portrait">Family/Group Portrait</SelectItem>
-                    <SelectItem value="fashion-collection">Fashion Collection Shoot</SelectItem>
+                    <SelectItem value="fashion-individual">Individual Outfits</SelectItem>
+                    <SelectItem value="fashion-half">Half Collection</SelectItem>
+                    <SelectItem value="fashion-full">Full Collection</SelectItem>
                     <SelectItem value="convocation">Convocation Session</SelectItem>
                     <SelectItem value="call-to-bar">Call to Bar Session</SelectItem>
                     <SelectItem value="event-quarter">Quarter Day Event</SelectItem>
@@ -254,7 +257,7 @@ export default function BookingForm({ packages, deliveryFees, additionalFees, se
 
           {selectedPackage && (
             <>
-              {(selectedPackage.id === "portrait" || selectedPackage.id === "call-to-bar" || selectedPackage.id === "convocation" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection") && (
+              {isLocationBasedPackage(selectedPackage.id) && (
                 <>
                   <FormField
                     control={form.control}
@@ -372,7 +375,7 @@ export default function BookingForm({ packages, deliveryFees, additionalFees, se
                 </>
               )}
 
-              {(selectedPackage.id === "portrait" || selectedPackage.id === "call-to-bar" || selectedPackage.id === "convocation" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection") && (
+              {isLocationBasedPackage(selectedPackage.id) && (
                 <FormField
                   control={form.control}
                   name="numberOfOutfits"
@@ -490,7 +493,7 @@ export default function BookingForm({ packages, deliveryFees, additionalFees, se
                 selectedPackage={selectedPackage}
                 deliveryFees={deliveryFees}
                 additionalFees={additionalFees}
-                numberOfOutfits={selectedPackage.id === "portrait" || selectedPackage.id === "family-portrait" || selectedPackage.id === "fashion-collection" || selectedPackage.id === "call-to-bar" || selectedPackage.id === "convocation" ? numberOfOutfits : 1}
+                numberOfOutfits={isPerOutfitPackage(selectedPackage.id) || isLocationBasedPackage(selectedPackage.id) ? numberOfOutfits : 1}
                 locationType={selectedLocationType}
                 location={form.watch("location") || ""}
                 additionalOptions={form.watch("additionalOptions") || []}

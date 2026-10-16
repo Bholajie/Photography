@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { format } from 'date-fns';
 import { getPricingConfig } from '@/lib/pricing';
+import { isLocationBasedPackage, isPerOutfitPackage } from '@/lib/packages';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -62,19 +63,14 @@ export async function POST(request: Request) {
       return options.map(option => getAdditionalOptionPrice(option))
     }
 
-    // Determine if package is outfit-based or event package
-    const isOutfitBasedPackage = selectedPackage && (
-      selectedPackage.id === "portrait" || 
-      selectedPackage.id === "family-portrait" || 
-      selectedPackage.id === "fashion-collection" ||
-      selectedPackage.id === "call-to-bar" ||
-      selectedPackage.id === "convocation"
-    );
+    // Determine whether the package supports location fees and per-outfit pricing.
+    const isOutfitBasedPackage = selectedPackage && isLocationBasedPackage(selectedPackage.id);
+    const isPerOutfitPricing = selectedPackage && isPerOutfitPackage(selectedPackage.id);
 
     const isEventPackage = selectedPackage && selectedPackage.id.startsWith("event-");
 
     // Calculate base price
-    const basePrice = isOutfitBasedPackage 
+    const basePrice = isPerOutfitPricing
       ? (selectedPackage ? selectedPackage.price * numberOfOutfits : 0)
       : (selectedPackage ? selectedPackage.price : 0);
 
@@ -117,7 +113,9 @@ export async function POST(request: Request) {
     const packageLabels = {
       portrait: "Portrait Session",
       "family-portrait": "Family/Group Portrait",
-      "fashion-collection": "Fashion Collection Shoot",
+      "fashion-individual": "Individual Outfits",
+      "fashion-half": "Half Collection",
+      "fashion-full": "Full Collection",
       convocation: "Convocation Session",
       "call-to-bar": "Call to Bar Session",
       "event-quarter": "Quarter Day Event",
@@ -142,7 +140,7 @@ export async function POST(request: Request) {
 
     // Find images per outfit feature for relevant packages
     let imagesPerOutfit: string | null = null;
-    if (["portrait", "family-portrait", "fashion-collection", "convocation", "call-to-bar"].includes(packageId)) {
+    if (["portrait", "family-portrait", "fashion-individual", "fashion-half", "fashion-full", "convocation", "call-to-bar"].includes(packageId)) {
       if (selectedPackage && Array.isArray(selectedPackage.features)) {
         const found = selectedPackage.features.find(f => typeof f === 'string' && f.toLowerCase().includes("images per outfit"));
         if (typeof found === 'string') imagesPerOutfit = found;
@@ -240,7 +238,7 @@ export async function POST(request: Request) {
 
                 <div class="section">
                   <h3>Price Breakdown</h3>
-                  ${isOutfitBasedPackage ? 
+                  ${isPerOutfitPricing ?
                     `<p><span class="label">Base Price (${numberOfOutfits} ${numberOfOutfits === 1 ? 'outfit' : 'outfits'}):</span> ₦${basePrice.toLocaleString()}</p>` :
                     `<p><span class="label">Base Price:</span> ₦${basePrice.toLocaleString()}</p>`
                   }
